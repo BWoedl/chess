@@ -14,9 +14,18 @@ describe Board do
         grid = subject.instance_variable_get(:@grid)
         expect(grid[0][0]).to be_a(Spot)
       end
-      it 'sets spots to have nil pieces' do
+      it 'sets middle spots to have nil pieces' do
         grid = subject.instance_variable_get(:@grid)
-        expect(grid[0][0].piece).to be nil
+        expect(grid[2][0].piece).to be nil
+      end
+    end
+  end
+
+  describe '.start_board' do
+    context 'adds pieces to spots on board' do
+      it 'adds pawns to 2nd row' do
+      grid = subject.instance_variable_get(:@grid)
+      expect(grid[1][6].piece).to eq('pawn')
       end
     end
   end
