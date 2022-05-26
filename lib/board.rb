@@ -45,8 +45,10 @@ class Board
   end
 
   def display
-    line = ''
-    @grid.each do |row|
+    puts `clear`
+    line = "   a      b      c      d      e      f      g      h\n\n".bold
+    @grid.each_with_index do |row, index|
+      # line += "  #{index}  "
       line += display_block(row)
     end
     puts line
@@ -58,7 +60,7 @@ class Board
       row.each do |spot|
         line += (spot.x.even? && spot.y.even?) || (spot.x.odd? && spot.y.odd?) ? CYAN_BG : GRAY_BG
         if index == 1
-          spot.piece.nil? ? line : line[-8] = spot.piece.symbol.to_s.bold
+          spot.piece.nil? ? line : line[-8] = spot.piece.symbol
         end
       end
       line += "\n"

@@ -7,6 +7,6 @@ class Pawn < Piece
   end
 
   def symbol
-    color == 'white' ? '♙' : '♟'
+    color == 'white' ? '♟'.bold : '♟'.black
   end
 end

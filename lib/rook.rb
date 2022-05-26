@@ -9,7 +9,7 @@ class Rook < Piece
   end
 
   def symbol
-    color == 'white' ? '♜' : '♜'.black
+    color == 'white' ? '♜'.bold : '♜'.black
   end
 end
 
