@@ -35,7 +35,7 @@ class Board
     @grid[0][1].piece, @grid[0][6].piece = Knight.new('black')
     @grid[0][2].piece, @grid[0][5].piece = Bishop.new('black')
     @grid[0][3].piece = King.new('black')
-    @grid[0][3].piece = Queen.new('black')
+    @grid[0][4].piece = Queen.new('black')
 
     @grid[1][0].piece, @grid[1][1].piece = Pawn.new('black')
     @grid[1][2].piece, @grid[1][3].piece = Pawn.new('black')
@@ -45,7 +45,7 @@ class Board
     @grid[7][0].piece, @grid[7][7].piece = Rook.new('white')
     @grid[7][1].piece, @grid[7][6].piece = Knight.new('white')
     @grid[7][2].piece, @grid[7][5].piece = Bishop.new('white')
-    @grid[7][3].piece = King.new('white')
+    @grid[7][4].piece = King.new('white')
     @grid[7][3].piece = Queen.new('white')
 
     @grid[6][0].piece, @grid[6][1].piece = Pawn.new('white')
