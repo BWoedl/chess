@@ -25,7 +25,7 @@ describe Board do
     context 'adds pieces to spots on board' do
       it 'adds pawns to 2nd row' do
       grid = subject.instance_variable_get(:@grid)
-      expect(grid[1][6].piece).to eq('pawn')
+      expect(grid[1][6].piece).to be_a(Pawn)
       end
     end
   end
