@@ -1,4 +1,5 @@
 require_relative 'spot'
+require_relative 'color'
 require_relative 'piece'
 require_relative 'rook'
 require_relative 'knight'
@@ -9,10 +10,12 @@ require_relative 'pawn'
 
 class Board
   attr_accessor :grid
+  CYAN_BG = '       '.bg_cyan
+  GRAY_BG = '       '.bg_gray
 
   def initialize(grid = create_board)
     @grid = grid
-    start_board
+    setup_board_pieces
   end
 
   def create_board
@@ -30,36 +33,36 @@ class Board
     grid
   end
 
-  def start_board
-    @grid[0][0].piece, @grid[0][7].piece = Rook.new('black')
-    @grid[0][1].piece, @grid[0][6].piece = Knight.new('black')
-    @grid[0][2].piece, @grid[0][5].piece = Bishop.new('black')
-    @grid[0][3].piece = King.new('black')
-    @grid[0][4].piece = Queen.new('black')
+  def setup_board_pieces
+    piece_types = [Rook, Knight, Bishop, King, Queen, Bishop, Knight, Rook]
 
-    @grid[1][0].piece, @grid[1][1].piece = Pawn.new('black')
-    @grid[1][2].piece, @grid[1][3].piece = Pawn.new('black')
-    @grid[1][4].piece, @grid[1][5].piece = Pawn.new('black')
-    @grid[1][6].piece, @grid[1][7].piece = Pawn.new('black')
-
-    @grid[7][0].piece, @grid[7][7].piece = Rook.new('white')
-    @grid[7][1].piece, @grid[7][6].piece = Knight.new('white')
-    @grid[7][2].piece, @grid[7][5].piece = Bishop.new('white')
-    @grid[7][4].piece = King.new('white')
-    @grid[7][3].piece = Queen.new('white')
-
-    @grid[6][0].piece, @grid[6][1].piece = Pawn.new('white')
-    @grid[6][2].piece, @grid[6][3].piece = Pawn.new('white')
-    @grid[6][4].piece, @grid[6][5].piece = Pawn.new('white')
-    @grid[6][6].piece, @grid[6][7].piece = Pawn.new('white')
+    piece_types.each_with_index do |type, i|
+      @grid[0][i].piece = type.new('black')
+      @grid[7][i].piece = type.new('white')
+      @grid[1][i].piece = Pawn.new('black')
+      @grid[6][i].piece = Pawn.new('white')
+    end
   end
 
   def display
     line = ''
     @grid.each do |row|
-      row.each { |spot| line += "#{spot.x}, #{spot.y}: #{spot.piece} | "}
-      line += "\n"
+      line += display_block(row)
     end
     puts line
+  end
+
+  def display_block(row)
+    line = ''
+    3.times do |index|
+      row.each do |spot|
+        line += (spot.x.even? && spot.y.even?) || (spot.x.odd? && spot.y.odd?) ? CYAN_BG : GRAY_BG
+        if index == 1
+          spot.piece.nil? ? line : line[-8] = spot.piece.symbol.to_s.bold
+        end
+      end
+      line += "\n"
+    end
+    line
   end
 end

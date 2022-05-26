@@ -1,4 +1,6 @@
 class Bishop < Piece
+  attr_accessor :symbol
+  
   def initialize(color)
     super(color)
     @symbol = symbol
