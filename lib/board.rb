@@ -67,4 +67,8 @@ class Board
     end
     line
   end
+
+  # def display_symbol(spot, line)
+  #   spot.piece.nil? ? line : line[-8] = spot.piece.symbol
+  # end
 end

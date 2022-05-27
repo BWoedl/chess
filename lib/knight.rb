@@ -3,10 +3,10 @@ class Knight < Piece
 
   def initialize(color)
     super(color)
-    @symbol = symbol
+    @symbol = set_symbol
   end
 
-  def symbol
+  def set_symbol
     color == 'white' ? '♞'.bold : '♞'.black
   end
 end
