@@ -21,11 +21,19 @@ describe Board do
     end
   end
 
-  describe '.start_board' do
+  describe 'setup_board_pieces' do
     context 'adds pieces to spots on board' do
       it 'adds pawns to 2nd row' do
-      grid = subject.instance_variable_get(:@grid)
-      expect(grid[1][6].piece).to be_a(Pawn)
+        grid = subject.instance_variable_get(:@grid)
+        expect(grid[1][6].piece).to be_a(Pawn)
+      end
+      it 'adds queen to the fifth column on each side' do 
+        grid = subject.instance_variable_get(:@grid)
+        expect(grid[0][4].piece).to be_a(Queen)
+      end
+      it 'adds king to the fourth column on each side' do 
+        grid = subject.instance_variable_get(:@grid)
+        expect(grid[7][3].piece).to be_a(King)
       end
     end
   end
