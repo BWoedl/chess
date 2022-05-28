@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'spot'
 require_relative 'color'
 require_relative 'piece'
@@ -10,6 +12,7 @@ require_relative 'pawn'
 
 class Board
   attr_accessor :grid
+
   CYAN_BG = '       '.bg_cyan
   GRAY_BG = '       '.bg_gray
 
@@ -18,9 +21,7 @@ class Board
     setup_board_pieces
   end
 
-  def create_board
-    grid = []
-    y = 0
+  def create_board(grid = [], y = 0)
     8.times do
       grid[y] = []
       x = 0
@@ -47,28 +48,23 @@ class Board
   def display
     puts `clear`
     line = "   a      b      c      d      e      f      g      h\n\n".bold
-    @grid.each_with_index do |row, index|
-      # line += "  #{index}  "
-      line += display_block(row)
+    @grid.each do |row|
+      line += display_block_lines(row)
     end
     puts line
   end
 
-  def display_block(row)
-    line = ''
+  # return to this to reduce complexity
+
+  def display_block_lines(row, line = '')
     3.times do |index|
       row.each do |spot|
         line += (spot.x.even? && spot.y.even?) || (spot.x.odd? && spot.y.odd?) ? CYAN_BG : GRAY_BG
-        if index == 1
-          spot.piece.nil? ? line : line[-8] = spot.piece.symbol
-        end
+        index == 1 && !spot.piece.nil? ? line[-8] = spot.piece.symbol : line
+        index == 1 && spot.x == 7 ? line += "    #{spot.y + 1}".bold : line
       end
       line += "\n"
     end
     line
   end
-
-  # def display_symbol(spot, line)
-  #   spot.piece.nil? ? line : line[-8] = spot.piece.symbol
-  # end
 end
