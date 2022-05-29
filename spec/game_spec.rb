@@ -129,6 +129,7 @@ describe Game do
         allow(subject).to receive(:get_piece).and_return(king)
         allow(king).to receive(:legal_move?).with(0, 1).and_return(true)
         allow(subject).to receive(:puts)
+        allow(board).to receive(:display)
       end
       it 'calls for another turn' do
         expect(subject).to receive(:take_turn).once
