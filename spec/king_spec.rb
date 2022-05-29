@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'piece'
 require 'king'
 
 describe King do

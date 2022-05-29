@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'piece'
 require 'rook'
 
 describe Rook do

@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require 'piece'
 require 'pawn'
 
 describe Pawn do
-  describe '.legal_move? for white pawn' do
+  xdescribe '.legal_move? for white pawn' do
     context 'moves one space forward' do
       it 'returns false' do
         expect(Pawn.legal_move?([3, 3], [4, 3])).to be(true)
@@ -19,6 +20,7 @@ describe Pawn do
         #move count > 1
         expect(Pawn.legal_move?([4, 3], [5, 3])).to be(false)
       end
+    end
     context 'moves diagonally when no piece in the target spot' do
       it 'returns false' do
         #target spot empty
@@ -48,11 +50,11 @@ describe Pawn do
         expect(Pawn.legal_move?([4, 3], [3, 3])).to be(false)
       end
     end
-    describe '.legal_move? for black pawn' do
-      context 'moves backward' do
-        it 'returns false' do
-          expect(Pawn.legal_move?([4, 3], [5, 3])).to be(false)
-        end
+  end
+  xdescribe '.legal_move? for black pawn' do
+    context 'moves backward' do
+      it 'returns false' do
+        expect(Pawn.legal_move?([4, 3], [5, 3])).to be(false)
       end
     end
   end
