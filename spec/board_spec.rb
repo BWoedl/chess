@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../lib/board'
-require_relative '../lib/spot'
+require 'board'
+require 'spot'
 
 describe Board do
   subject(:board) { Board.new }
