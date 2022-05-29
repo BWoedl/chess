@@ -4,7 +4,7 @@ require 'piece'
 require 'queen'
 
 describe Queen do
-  xdescribe '.legal_move' do
+  describe '.legal_move' do
     context 'moves two spaces up and one to the side' do
       it 'returns false' do
         expect(Queen.legal_move?([3, 3], [5, 4])).to be(false)
