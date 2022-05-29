@@ -1,19 +1,17 @@
+
+# frozen_string_literal: true
+
 require_relative 'lib/board'
 require_relative 'lib/game'
 require_relative 'lib/player'
 require_relative 'lib/color'
 
-# board = Board.new
-# board.display
-
 def start_game
   puts "\nHeyo, let's play chess!".magenta
   players = create_players
   while create_new_game?
-  board = Board.new
-  board.display
-    # game = Game.new(Board.new, players[0], players[1])
-    # game.play
+    game = Game.new(players[0], players[1])
+    game.play
   end
   puts 'See you next time!'
 end
