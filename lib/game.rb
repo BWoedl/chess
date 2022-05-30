@@ -13,7 +13,7 @@ class Game
 
   def initialize(player1, player2, board = Board.new)
     @board = board
-    @turn = 0
+    @turn = 1
     @player1 = player1
     @player2 = player2
   end
@@ -30,10 +30,10 @@ class Game
 
   def take_turn(legal: false)
     until legal == true
-      coordinates = convert_to_coordinates(spot_to_move(piece_to_move))
-      piece = get_piece(coordinates)
-      if piece.legal_move?(coordinates[0], coordinates[1])
-        update_board
+      spots = convert_to_coordinates(spot_to_move(piece_to_move))
+      piece = @board.get_piece(spots[0])
+      if piece.legal_move?(@board, spots[0], spots[1]) && movement?(spots[0], spots[1])
+        update_board(piece, spots[0], spots[1])
         legal = true
       else
         puts ILLEGAL_MOVE
@@ -41,10 +41,19 @@ class Game
     end
   end
 
-  def update_board
+  def update_board(piece, start_spot, end_spot)
     @turn += 1
-    # do more stuffs here
+    piece.move += 1
+    target_spot_piece = @board.get_piece(end_spot)
+    target_spot_piece.defeated = true unless target_spot_piece.nil?
+    p @board.grid
+    @board.grid[end_spot[0]][end_spot[1]].piece = piece
+    @board.grid[start_spot[0]][start_spot[1]].piece = nil
     @board.display
+  end
+
+  def movement?(start_spot, end_spot)
+    start_spot != end_spot
   end
 
   def piece_to_move(coordinates = [])
@@ -65,10 +74,6 @@ class Game
       input = gets.chomp
     end
     coordinates << input
-  end
-
-  def get_piece(coordinates)
-    @board.grid[coordinates[0][0]][coordinates[0][1]].piece.class
   end
 
   def convert_to_coordinates(input)
