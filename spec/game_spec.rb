@@ -4,11 +4,8 @@ require 'game'
 
 describe Game do
   let(:board) { double('board') }
-  let(:king) { double('king', class: King) }
-  let(:rook) { double('rook', class: Rook) }
   let(:spot) { double('spot') }
-  let(:spot1) { double('spot', piece: king) }
-  let(:spot2) { double('spot', piece: rook) }
+  let(:king) { double('king', class: King) }
   let(:player1) { double('player1', name: 'Dingo') }
   let(:player2) { double('player2', name: 'Huckleberry') }
   subject(:game) { described_class.new(player1, player2, board) }
@@ -65,28 +62,13 @@ describe Game do
     end
   end
 
-  describe '.get_piece' do
-    context 'when a king is in the spot on the board' do
-      it 'returns king class' do
-        allow(board).to receive(:grid).and_return([[spot2, spot, spot, spot, spot1, spot, spot],
-                                                   [spot, spot, spot, spot, spot, spot, spot],
-                                                   [spot, spot, spot, spot, spot, spot, spot],
-                                                   [spot, spot, spot, spot, spot, spot, spot],
-                                                   [spot, spot, spot, spot, spot, spot, spot],
-                                                   [spot, spot, spot, spot, spot, spot, spot]])
-        expect(subject.get_piece([[0, 4], [5, 5]])).to match(King)
+  describe '.movement?' do
+    context 'checks if a player tries remain in the same space' do
+      it 'returns true if spots are different' do
+        expect(subject.movement?([2, 3], [2, 5])).to be true
       end
-    end
-
-    context 'when a rook is in the spot on the board ' do
-      it 'returns rook class' do
-        allow(board).to receive(:grid).and_return([[spot2, spot, spot, spot, spot1, spot, spot],
-                                                   [spot, spot, spot, spot, spot, spot, spot],
-                                                   [spot, spot, spot, spot, spot, spot, spot],
-                                                   [spot, spot, spot, spot, spot, spot, spot],
-                                                   [spot, spot, spot, spot, spot, spot, spot],
-                                                   [spot, spot, spot, spot, spot, spot, spot]])
-        expect(subject.get_piece([[0, 0], [5, 5]])).to match(Rook)
+      it 'returns false if spots are the same' do
+        expect(subject.movement?([3, 4], [3, 4])). to be false
       end
     end
   end
@@ -126,7 +108,7 @@ describe Game do
       before do
         allow(subject).to receive(:game_over?).and_return(false, true)
         allow(subject).to receive(:gets).and_return('a2', 'a3')
-        allow(subject).to receive(:get_piece).and_return(king)
+        allow(board).to receive(:get_piece).and_return(king)
         allow(king).to receive(:legal_move?).with(0, 1).and_return(true)
         allow(subject).to receive(:puts)
         allow(board).to receive(:display)
