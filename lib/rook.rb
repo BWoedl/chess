@@ -18,25 +18,25 @@ class Rook < Piece
     col_move = start_spot[1] - end_spot[1]
 
     if col_move.zero?
-      return true if check_intermediate_row_spots(board, start_spot[0], end_spot[0])
+      return true if intermediate_row_spots_open?(board, start_spot[0], end_spot[0])
     elsif row_move.zero?
-      return true if check_intermediate_col_spots(board, start_spot[1], end_spot[1])
+      return true if intermediate_col_spots_open?(board, start_spot[1], end_spot[1])
     else
       false
     end
   end
 
   # see if following two methods can be combined / abstracted 
-  def check_intermediate_row_spots(board, start_spot, end_spot)
+  def intermediate_row_spots_open?(board, start_spot, end_spot)
     (min(start_spot, end_spot)...max(start_spot, end_spot)).each do |spot|
       return false unless board.get_piece([spot, start_spot]).nil?
     end
     true
   end
 
-  def check_intermediate_col_spots(board, start_spot, end_spot)
+  def intermediate_col_spots_open?(board, start_spot, end_spot)
     (min(start_spot, end_spot)...max(start_spot, end_spot)).each do |spot|
-      return false unless board.get_piece([start_spot[0], spot]).nil?
+      return false unless board.get_piece([start_spot, spot]).nil?
     end
     true
   end
