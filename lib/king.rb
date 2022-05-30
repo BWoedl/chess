@@ -1,16 +1,22 @@
 class King < Piece
-  attr_accessor :symbol
+  attr_accessor :symbol, :move
 
   def initialize(color)
     super(color)
-    @symbol = set_symbol
+    @symbol = set_symbol    
+    @move = 1
   end
 
   def set_symbol
     color == 'white' ? '♛'.bold : '♛'.black
   end
 
-  def self.legal_move?(start_spot, end_spot)
-    (start_spot[0] - end_spot[0]).abs <= 1 && (start_spot[1] - end_spot[1]).abs <= 1
+  def legal_move?(board, start_spot, end_spot)
+    return false if occupied_by_same_color?(board, end_spot)
+
+    row_move = start_spot[0] - end_spot[0]
+    col_move = start_spot[1] - end_spot[1]
+
+    row_move.abs <= 1 && col_move.abs <= 1
   end
 end
