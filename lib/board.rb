@@ -63,7 +63,7 @@ class Board
   def display_block_lines(row, line = '')
     3.times do |index|
       row.each do |spot|
-        line += (spot.x.even? && spot.y.even?) || (spot.x.odd? && spot.y.odd?) ? GRAY_BG : CYAN_BG
+        line += (spot.x.even? && spot.y.even?) || (spot.x.odd? && spot.y.odd?) ? CYAN_BG : GRAY_BG
         index == 1 && !spot.piece.nil? ? line[-8] = spot.piece.symbol : line
         index == 1 && spot.y == 7 ? line += "    #{spot.x + 1}".bold : line
       end
