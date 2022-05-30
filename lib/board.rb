@@ -21,34 +21,38 @@ class Board
     setup_board_pieces
   end
 
-  def create_board(grid = [], y = 0)
+  def get_piece(spot)
+    @grid[spot[0]][spot[1]].piece
+  end
+
+  def create_board(grid = [], x = 0)
     8.times do
-      grid[y] = []
-      x = 0
+      grid[x] = []
+      y = 0
       8.times do
-        grid[y] << Spot.new(x, y, nil)
-        x += 1
+        grid[x] << Spot.new(x, y, nil)
+        y += 1
       end
-      y += 1
+      x += 1
     end
     grid
   end
 
   def setup_board_pieces
-    piece_types = [Rook, Knight, Bishop, King, Queen, Bishop, Knight, Rook]
+    piece_types = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
 
     piece_types.each_with_index do |type, i|
-      @grid[0][i].piece = type.new('black')
-      @grid[7][i].piece = type.new('white')
-      @grid[1][i].piece = Pawn.new('black')
-      @grid[6][i].piece = Pawn.new('white')
+      @grid[7][i].piece = type.new('black')
+      @grid[0][i].piece = type.new('white')
+      @grid[6][i].piece = Pawn.new('black')
+      @grid[1][i].piece = Pawn.new('white')
     end
   end
 
   def display
     puts `clear`
     line = "   a      b      c      d      e      f      g      h\n\n".bold
-    @grid.each do |row|
+    @grid.reverse.each do |row|
       line += display_block_lines(row)
     end
     puts line
@@ -59,9 +63,9 @@ class Board
   def display_block_lines(row, line = '')
     3.times do |index|
       row.each do |spot|
-        line += (spot.x.even? && spot.y.even?) || (spot.x.odd? && spot.y.odd?) ? CYAN_BG : GRAY_BG
+        line += (spot.x.even? && spot.y.even?) || (spot.x.odd? && spot.y.odd?) ? GRAY_BG : CYAN_BG
         index == 1 && !spot.piece.nil? ? line[-8] = spot.piece.symbol : line
-        index == 1 && spot.x == 7 ? line += "    #{spot.y + 1}".bold : line
+        index == 1 && spot.y == 7 ? line += "    #{spot.x + 1}".bold : line
       end
       line += "\n"
     end
