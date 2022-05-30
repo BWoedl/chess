@@ -5,7 +5,8 @@ require_relative 'board'
 class Game
   attr_accessor :board
 
-  INVALID_INPUT = "Try again with a valid coordinate!\n"
+  INVALID_PIECE = "Try again with a valid position! Select one of your pieces only\n"
+  INVALID_TARGET = "Try again with a valid position! It must be on the board\n"
   OBTAIN_TARGET_SPOT = "\nNow put the column and row of the spot you'd like to move to. Ex: b4"
   ILLEGAL_MOVE = "That's an illegal move for your piece. Try again!"
   GAME_END = "Game over! "
@@ -28,13 +29,14 @@ class Game
     game_end
   end
 
-  def take_turn(legal: false)
-    until legal == true
-      spots = convert_to_coordinates(spot_to_move(piece_to_move))
-      piece = @board.get_piece(spots[0])
-      if piece.legal_move?(@board, spots[0], spots[1]) && movement?(spots[0], spots[1])
-        update_board(piece, spots[0], spots[1])
-        legal = true
+  def take_turn(valid: false)
+    until valid == true
+      start_spot = convert_input(piece_to_move)
+      end_spot = convert_input(spot_to_move)
+      piece = @board.get_piece(start_spot)
+      if valid_turn?(piece, start_spot, end_spot)
+        update_board(piece, start_spot, end_spot)
+        valid = true
       else
         puts ILLEGAL_MOVE
       end
@@ -46,39 +48,43 @@ class Game
     piece.move += 1
     target_spot_piece = @board.get_piece(end_spot)
     target_spot_piece.defeated = true unless target_spot_piece.nil?
-    p @board.grid
     @board.grid[end_spot[0]][end_spot[1]].piece = piece
     @board.grid[start_spot[0]][start_spot[1]].piece = nil
     @board.display
   end
 
-  def movement?(start_spot, end_spot)
-    start_spot != end_spot
-  end
-
-  def piece_to_move(coordinates = [])
+  def piece_to_move
     puts "\n#{player_turn.name}" + OBTAIN_TARGET_PIECE
     input = gets.chomp
-    until valid_input?(input)
-      puts INVALID_INPUT
+    until valid_input?(input) && own_piece?(player_turn, convert_input(input))
+      puts INVALID_PIECE
       input = gets.chomp
     end
-    coordinates << input
+    input
   end
 
-  def spot_to_move(coordinates)
+  def spot_to_move
     puts OBTAIN_TARGET_SPOT
     input = gets.chomp
     until valid_input?(input)
-      puts INVALID_INPUT
+      puts INVALID_TARGET
       input = gets.chomp
     end
-    coordinates << input
+    input
   end
 
-  def convert_to_coordinates(input)
+  def valid_turn?(piece, start_spot, end_spot)
+    piece.legal_move?(@board, start_spot, end_spot) && start_spot != end_spot
+  end
+
+  def own_piece?(player, start_spot)
+    return false if @board.get_piece(start_spot).nil?
+    return true if player.color == @board.get_piece(start_spot).color
+  end
+
+  def convert_input(input)
     columns = 'abcdefgh'
-    [[input[0][1].to_i - 1, columns.index(input[0][0])], [input[1][1].to_i - 1, columns.index(input[1][0])]]
+    [input[1].to_i - 1, columns.index(input[0])]
   end
 
   def valid_input?(input)
