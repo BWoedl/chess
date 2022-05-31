@@ -5,9 +5,9 @@ require 'game'
 describe Game do
   let(:board) { double('board') }
   let(:spot) { double('spot') }
-  let(:king) { double('king', class: King) }
-  let(:player1) { double('player1', name: 'Dingo') }
-  let(:player2) { double('player2', name: 'Huckleberry') }
+  let(:king) { double('king', class: King, color: 'white') }
+  let(:player1) { double('player1', name: 'Dingo', color: 'white') }
+  let(:player2) { double('player2', name: 'Huckleberry', color: 'black') }
   subject(:game) { described_class.new(player1, player2, board) }
 
   context 'initializer' do
@@ -55,37 +55,40 @@ describe Game do
     end
   end
 
-  describe '.convert_to_coordinates' do
-    it 'returns a 2d array with 2 sets of x, y coordinates corresponding to 8x8 grid' do
-      input = %w[b4 f6]
-      expect(subject.convert_to_coordinates(input)).to eq([[3, 1], [5, 5]])
+  describe '.convert_input' do
+    it 'returns an array with row and column number' do
+      input = 'b4'
+      expect(subject.convert_input(input)).to eq([3, 1])
     end
   end
 
-  describe '.movement?' do
+  describe '.valid_turn?' do
     context 'checks if a player tries remain in the same space' do
       it 'returns true if spots are different' do
-        expect(subject.movement?([2, 3], [2, 5])).to be true
+        allow(king).to receive(:legal_move?).with(board, [2, 3], [2, 5]).and_return(true)
+        expect(subject.valid_turn?(king, [2, 3], [2, 5])).to be true
       end
       it 'returns false if spots are the same' do
-        expect(subject.movement?([3, 4], [3, 4])). to be false
+        allow(king).to receive(:legal_move?).with(board, [3, 4], [3, 4]).and_return(true)
+        expect(subject.valid_turn?(king, [3, 4], [3, 4])). to be false
       end
     end
   end
 
   describe '.spot_to_move' do
-    it 'returns an array where valid user input is pushed into argument array' do
+    it 'returns an array with row and column number' do
       allow(subject).to receive(:puts)
       allow(subject).to receive(:gets).and_return('a4')
-      expect(subject.spot_to_move(['b2'])).to eq(['b2', 'a4'])
+      expect(subject.spot_to_move).to eq('a4')
     end
   end
 
   describe '.piece_to_move' do
-    it 'returns an array with valid user input' do
+    it 'returns an array with row and column number' do
       allow(subject).to receive(:puts)
       allow(subject).to receive(:gets).and_return('b4')
-      expect(subject.piece_to_move).to eq(['b4'])
+      allow(board).to receive(:get_piece).and_return(king)
+      expect(subject.piece_to_move).to eq('b4')
     end
   end
 
