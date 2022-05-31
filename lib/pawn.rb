@@ -15,13 +15,10 @@ class Pawn < Piece
     row_move = end_spot[0] - start_spot[0]
     col_move = end_spot[1] - start_spot[1]
     return false if occupied_by_same_color?(board, end_spot)
-    p "before legal move asks for capture"
     return true if capture?(board, start_spot, end_spot)
-    p "after legal move asks for capture"
     return legal_first_move?(start_spot, end_spot) if move == 1
     return true if color == 'black' && col_move.zero? && row_move == -1
     return true if color == 'white' && col_move.zero? && row_move == 1
-
     false
   end
 
@@ -29,14 +26,11 @@ class Pawn < Piece
     row_move = end_spot[0] - start_spot[0]
     return true if color == 'black' && start_spot[1] == end_spot[1] && row_move.between?(-2, -1)
     return true if color == 'white' && start_spot[1] == end_spot[1] && row_move.between?(1, 2)
-
     false
   end
 
   def capture?(board, start_spot, end_spot)
-    p "before capture asks for en passant"
-    return true if en_passant?(board, start_spot, end_spot) == true
-    p "after capture asks for en passant"
+    return true if en_passant?(board, start_spot, end_spot)
     return false unless diagonal_move?(start_spot, end_spot) && (end_spot[0] - start_spot[0]).abs == 1
     return false if board.get_piece(end_spot).nil? || board.get_piece(end_spot).color == color 
 
@@ -45,10 +39,8 @@ class Pawn < Piece
 
   def en_passant?(board, start_spot, end_spot)
     piece_to_pass = board.get_piece(en_passant_spot(start_spot, end_spot))
-    p "before en passant would return false"
     return false if piece_to_pass.nil?
     return false unless piece_to_pass.instance_of?(Pawn) && piece_to_pass.move == 2
-    p "after en passant would return false" 
 
     true
   end
