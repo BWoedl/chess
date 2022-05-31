@@ -31,14 +31,12 @@ describe Pawn do
     end
     context 'moves diagonally when no piece in the target spot' do
       it 'returns false' do
-        #target spot empty
         allow(board).to receive(:get_piece).and_return(nil)
         expect(black_pawn.legal_move?(board, [5, 4], [4, 3])).to be(false)
       end
     end
-    xcontext 'moves diagonally when a piece in the target spot' do
+    context 'moves diagonally when a piece in the target spot' do
       it 'returns true' do
-        # target spot occupied
         allow(board).to receive(:get_piece).and_return(white_pawn)
         expect(black_pawn.legal_move?(board, [5, 4], [4, 3])).to be(true)
       end
@@ -51,6 +49,30 @@ describe Pawn do
     end
     context 'moves backward' do
       it 'returns false' do
+        allow(board).to receive(:get_piece).and_return(nil)
+        expect(black_pawn.legal_move?(board, [2, 3], [3, 3])).to be(false)
+      end
+    end
+    context 'en passant is a valid move' do
+      xit 'returns true' do
+        allow(board).to receive(:get_piece).and_return(nil)
+        expect(black_pawn.legal_move?(board, [2, 3], [3, 3])).to be(false)
+      end
+    end
+    context 'en passant is not valid because passed piece is king' do
+      xit 'returns false' do
+        allow(board).to receive(:get_piece).and_return(nil)
+        expect(black_pawn.legal_move?(board, [2, 3], [3, 3])).to be(false)
+      end
+    end
+    context 'en passant is not valid because passed piece was first move' do
+      xit 'returns false' do
+        allow(board).to receive(:get_piece).and_return(nil)
+        expect(black_pawn.legal_move?(board, [2, 3], [3, 3])).to be(false)
+      end
+    end
+    context 'en passant is not valid because passed piece was third move' do
+      xit 'returns false' do
         allow(board).to receive(:get_piece).and_return(nil)
         expect(black_pawn.legal_move?(board, [2, 3], [3, 3])).to be(false)
       end
@@ -68,6 +90,12 @@ describe Pawn do
         allow(board).to receive(:get_piece).and_return(nil)
         expect(white_pawn.legal_move?(board, [2, 3], [3, 3])).to be(true)
       end
+    end
+  end
+  describe '.en_passant' do 
+    xit 'updates the status of the piece it passes' do 
+    end
+    xit 'updates the spot that it passed the piece on to be nil' do 
     end
   end
 end
