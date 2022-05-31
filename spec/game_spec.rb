@@ -16,15 +16,6 @@ describe Game do
     end
   end
 
-  xdescribe '.draw?' do
-  end
-
-  xdescribe '.won?' do
-  end
-
-  xdescribe '.game_over?' do
-  end
-
   describe '.valid_input?' do
     context 'input doesn\'t include 2 characters' do
       it 'returns false' do
@@ -123,9 +114,57 @@ describe Game do
     end
   end
 
-  xdescribe '.take_turn' do
+  describe '.take_turn' do
+    context 'something' do
+      xit 'something do' do
+      end
+    end
   end
 
-  xdescribe '.update_board' do
+  describe '.update_board' do
+    context 'something' do
+      xit 'something' do
+      end
+    end
+  end
+
+  describe '.move_piece' do
+    context 'it does somthing' do
+      xit 'blah blah' do
+      end
+    end
+  end
+  describe 'defeat_piece' do
+    context 'it blah' do
+      xit 'something' do
+      end
+    end
+  end
+  describe 'own_piece?' do
+    context 'it something' do
+      xit 'blah bee bah' do
+      end
+    end
+  end
+
+  describe '.draw?' do
+    context 'it something' do
+      xit 'blah bee bah' do
+      end
+    end
+  end
+
+  describe '.won?' do
+    context 'it something' do
+      xit 'blah bee bah' do
+      end
+    end
+  end
+
+  describe '.game_over?' do
+    context 'it something' do
+      xit 'blah bee bah' do
+      end
+    end
   end
 end
