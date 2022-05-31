@@ -13,8 +13,10 @@ class Queen < Piece
 
   def legal_move?(board, start_spot, end_spot)
     return false if occupied_by_same_color?(board, end_spot)
-    return true if start_spot[0] == end_spot[0] || start_spot[1] == end_spot[1]
-    return true if ((start_spot[0] - end_spot[0]).abs - (start_spot[1] - end_spot[1]).abs).zero?
+    operators = get_direction(start_spot, end_spot)
+    return false unless diagonal_move?(start_spot, end_spot) || operators[0] == 0 || operators[1] ==0
+    path = generate_path(start_spot, end_spot, operators[0], operators[1])
+    return true if intermediate_spots_open?(board, path)
 
     false
   end
