@@ -22,7 +22,10 @@ class Board
   end
 
   def get_piece(spot)
-    @grid[spot[0]][spot[1]].piece
+    unless @grid[spot[0]][spot[1]].nil? 
+      return @grid[spot[0]][spot[1]].piece
+    end
+    nil
   end
 
   def create_board(grid = [], x = 0)
