@@ -100,7 +100,7 @@ class Game
   end
 
   def valid_input?(input)
-    return false if input[0] && input[1].nil?
+    return false unless input.length == 2
     return true if input[0].match(/[abcdefgh]/i) && input[1].match(/[12345678]/)
 
     false

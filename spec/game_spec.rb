@@ -30,6 +30,13 @@ describe Game do
       end
     end
 
+    context 'input is 0 characters' do
+      it 'returns false' do
+        input = ''
+        expect(subject.valid_input?(input)).to be false
+      end
+    end
+
     context 'input includes a number out of range' do
       it 'returns false' do
         input = 'a9'
