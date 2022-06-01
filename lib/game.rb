@@ -29,17 +29,14 @@ class Game
     game_end
   end
 
-  def take_turn(valid: false)
-    until valid == true
-      start_spot = convert_input(piece_to_move)
-      end_spot = convert_input(spot_to_move)
-      piece = @board.get_piece(start_spot)
-      if valid_turn?(piece, start_spot, end_spot)
-        update_board(piece, start_spot, end_spot)
-        valid = true
-      else
-        puts ILLEGAL_MOVE
-      end
+  def take_turn
+    start_spot = convert_input(piece_to_move)
+    end_spot = convert_input(spot_to_move)
+    piece = @board.get_piece(start_spot)
+    if valid_turn?(piece, start_spot, end_spot)
+      update_board(piece, start_spot, end_spot)
+    else
+      puts ILLEGAL_MOVE
     end
   end
 
@@ -77,7 +74,8 @@ class Game
     piece.legal_move?(@board, start_spot, end_spot) && start_spot != end_spot
   end
 
-  def move_piece(piece, start_spot, end_spot, passant_spot)
+  # move first line to its own method
+  def move_piece(piece, start_spot, end_spot, passant_spot = nil)
     target_spot_piece = passant_spot ? @board.get_piece(passant_spot) : @board.get_piece(end_spot)
     defeat_piece(target_spot_piece, passant_spot) unless target_spot_piece.nil?
     @board.grid[start_spot[0]][start_spot[1]].piece = nil
