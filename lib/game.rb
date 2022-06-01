@@ -74,7 +74,6 @@ class Game
     piece.legal_move?(@board, start_spot, end_spot) && start_spot != end_spot
   end
 
-  # move first line to its own method
   def move_piece(piece, start_spot, end_spot, passant_spot = nil)
     target_spot_piece = passant_spot ? @board.get_piece(passant_spot) : @board.get_piece(end_spot)
     defeat_piece(target_spot_piece, passant_spot) unless target_spot_piece.nil?
@@ -90,6 +89,8 @@ class Game
   def own_piece?(player, start_spot)
     return false if @board.get_piece(start_spot).nil?
     return true if player.color == @board.get_piece(start_spot).color
+
+    false
   end
 
   def convert_input(input)

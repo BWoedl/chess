@@ -3,14 +3,14 @@
 require 'game'
 
 describe Game do
-  let(:board) { Board.new }
-  let(:spot) { double('spot', piece: ) }
+  let(:board) { double('board') }
   let(:king) { double('king', class: King, color: 'white', move: 1, defeated: false) }
   let(:queen) { double('queen', class: Queen, color: 'black', move: 1, defeated: false) }
   let(:pawn) { double('pawn', class: Pawn, color: 'white', move: 1, defeated: false) }
-  let(:spot) { double('spot', piece: Pawn) }
-  let(:spotk) { double('spot', piece: king) }
-  let(:spotq) { double('spot', piece: queen) }
+  let(:p_spot) { double('spot', piece: Pawn) }
+  let(:e_spot) { double('spot') }
+  let(:k_spot) { double('spot', piece: king) }
+  let(:q_spot) { double('spot', piece: queen) }
   let(:player1) { double('player', name: 'Dingo', color: 'white') }
   let(:player2) { double('player', name: 'Huckleberry', color: 'black') }
   subject(:game) { described_class.new(player1, player2, board) }
@@ -122,38 +122,30 @@ describe Game do
   describe '.take_turn' do
     context 'when turn is not valid' do
       before do
-        allow(subject).to receive(:gets).and_return('c8', 'd8')
-        allow(board).to receive(:grid).and_return([[spot, spot, spot, spot, spot, spot, spot],
-                                                   [spot, spot, spot, spot, spot, spot, spot],
-                                                   [spot, spot, spot, spot, spot, spot, spot],
-                                                   [spot, spot, spot, spot, spot, spot, spot],
-                                                   [spot, spot, spot, spot, spot, spot, spot],
-                                                   [spot, spot, spot, spot, spot, spot, spot],
-                                                   [spot, spot, spot, spot, spot, spot, spot],
-                                                   [spot, spot, spotk, spotq, spot, spot, spot]])
-        allow(board).to receive(:get_piece).and_return(king)
-        allow(king).to receive(:legal_move?).and_return(false, true)
-        # allow(king).to receive(:move=)
-        # allow(subject).to receive(:defeat_piece).with(queen, nil)
-        # allow(queen).to receive(:defeated=)
-        # allow(board).to receive(:display)
+        allow(subject).to receive(:gets).and_return('c8', 'e8')
+        allow(board).to receive(:grid)
+        allow(board).to receive(:get_piece).and_return(king, king)
+        allow(king).to receive(:valid_turn?).and_return(false)
+        allow(king).to receive(:legal_move?).and_return(false)
+        allow(subject).to receive(:puts)
       end
-      it 'puts illegal move message' do
-        subject.instance_variable_set(:@turn, 1)
-        # allow(subject).to receive(:valid_turn?).and_return(false, true)
-        expect(subject.take_turn).to receive(:puts)
-        subject.take_turn
-      end
-      xit 'restarts the loop' do
-        expect(subject.take_turn).to receive(:update_board).once
+      it 'does not update the board' do
+        expect(subject).not_to receive(:update_board)
         subject.take_turn
       end
     end
     context 'when turn is valid' do
-      # allow(subject).to receive(:valid_turn?).and_return(false)
-      xit 'calls to update the board' do
+      before do
+        allow(subject).to receive(:gets).and_return('c8', 'd8')
+        allow(board).to receive(:grid)
+        allow(board).to receive(:get_piece).and_return(king, king)
+        allow(king).to receive(:valid_turn?).and_return(true)
+        allow(king).to receive(:legal_move?).and_return(true)
+        allow(subject).to receive(:puts)
       end
-      xit 'stops the loop' do
+      it 'calls to update the board' do
+        expect(subject).to receive(:update_board).once
+        subject.take_turn
       end
     end
   end
@@ -175,7 +167,7 @@ describe Game do
         subject.update_board(king, [0, 0], [0, 1])
       end
     end
-    context 'when piece is a pawn' do 
+    context 'when piece is a pawn' do
       before do
         allow(subject).to receive(:move_piece)
         allow(board).to receive(:display)
@@ -197,20 +189,87 @@ describe Game do
   end
 
   describe '.move_piece' do
-    context 'it does somthing' do
-      xit 'blah blah' do
+    context 'when there is no piece in the target spot' do
+      before do
+        allow(board).to receive(:grid).and_return([[e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                   [e_spot, k_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot]])
+        allow(board).to receive(:get_piece).with([2, 2]).and_return(nil)
+        allow(k_spot).to receive(:piece=)
+        allow(e_spot).to receive(:piece=)
+      end
+      it 'does not call the defeat_piece method' do
+        subject.move_piece(king, [1, 1], [2, 2])
+        expect(subject).not_to receive(:defeat_piece)
+      end
+    end
+    context 'when there is a piece in the target spot' do
+      before do
+        allow(board).to receive(:grid).and_return([[e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                   [e_spot, k_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                   [e_spot, e_spot, q_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot]])
+        allow(board).to receive(:get_piece).with([2, 2]).and_return(queen)
+        allow(queen).to receive(:defeated=)
+        allow(q_spot).to receive(:piece=)
+        allow(k_spot).to receive(:piece=)
+      end
+      it 'calls the defeat_piece method' do
+        expect(subject).to receive(:defeat_piece)
+        subject.move_piece(king, [1, 1], [2, 2])
+      end
+      it 'sets start spot as nil' do
+        expect(k_spot).to receive(:piece=).with(nil)
+        subject.move_piece(king, [1, 1], [2, 2])
       end
     end
   end
+
   describe 'defeat_piece' do
-    context 'it blah' do
-      xit 'something' do
-      end
+    it 'it changes the defeated attribute on a direct capture' do
+      target_spot_piece = queen
+      expect(target_spot_piece).to receive(:defeated=)
+      subject.defeat_piece(queen, nil)
+    end
+    it 'it changes the defeated attribute on an en passant move' do
+      target_spot_piece = queen
+      expect(target_spot_piece).to receive(:defeated=)
+      subject.defeat_piece(queen, nil)
     end
   end
+
   describe 'own_piece?' do
-    context 'it something' do
-      xit 'blah bee bah' do
+    context 'piece in target spot matches player color' do
+      before do
+        allow(board).to receive(:get_piece).and_return(king)
+      end
+      it 'returns true' do
+        expect(subject.own_piece?(player1, k_spot)).to be true
+      end
+    end
+    context 'piece in target spot does not match player color' do
+      before do
+        allow(board).to receive(:get_piece).and_return(queen)
+      end
+      it 'returns false' do
+        expect(subject.own_piece?(player1, q_spot)).to be false
+      end
+    end
+    context 'there is no piece in the start spot' do
+      before do
+        allow(board).to receive(:get_piece).and_return(nil)
+      end
+      it 'returns false' do
+        expect(subject.own_piece?(player1, e_spot)).to be false
       end
     end
   end
