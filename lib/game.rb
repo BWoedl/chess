@@ -40,17 +40,6 @@ class Game
     end
   end
 
-  def update_board(piece, start_spot, end_spot, passant_spot = nil)
-    @turn += 1
-    piece.move += 1
-    if piece.instance_of?(Pawn) && piece.en_passant?(@board, start_spot, end_spot)
-      passant_spot = piece.en_passant_spot(start_spot, end_spot)
-    end
-    move_piece(piece, start_spot, end_spot, passant_spot)
-    promote(piece, piece_to_swap, end_spot) if piece.instance_of?(Pawn) && eligible_for_promotion?(piece, end_spot)
-    @board.display
-  end
-
   def piece_to_move
     puts "\n#{player_turn.name}" + OBTAIN_TARGET_PIECE
     input = gets.chomp
@@ -71,29 +60,6 @@ class Game
     input
   end
 
-  def valid_turn?(piece, start_spot, end_spot)
-    piece.legal_move?(@board, start_spot, end_spot) && start_spot != end_spot
-  end
-
-  def move_piece(piece, start_spot, end_spot, passant_spot = nil)
-    target_spot_piece = passant_spot ? @board.get_piece(passant_spot) : @board.get_piece(end_spot)
-    defeat_piece(target_spot_piece, passant_spot) unless target_spot_piece.nil?
-    @board.grid[start_spot[0]][start_spot[1]].piece = nil
-    @board.grid[end_spot[0]][end_spot[1]].piece = piece
-  end
-
-  def defeat_piece(target_spot_piece, passant_spot)
-    target_spot_piece.defeated = true
-    @board.grid[passant_spot[0]][passant_spot[1]].piece = nil if passant_spot
-  end
-
-  def own_piece?(player, start_spot)
-    return false if @board.get_piece(start_spot).nil?
-    return true if player.color == @board.get_piece(start_spot).color
-
-    false
-  end
-
   def convert_input(input)
     columns = 'abcdefgh'
     [input[1].to_i - 1, columns.index(input[0])]
@@ -106,12 +72,38 @@ class Game
     false
   end
 
-  def game_over?
+  def own_piece?(player, start_spot)
+    return false if @board.get_piece(start_spot).nil?
+    return true if player.color == @board.get_piece(start_spot).color
+
     false
   end
 
-  def game_end
-    puts GAME_END
+  def valid_turn?(piece, start_spot, end_spot)
+    piece.legal_move?(@board, start_spot, end_spot) && start_spot != end_spot
+  end
+
+  def update_board(piece, start_spot, end_spot, passant_spot = nil)
+    @turn += 1
+    piece.move += 1
+    if piece.instance_of?(Pawn) && piece.en_passant?(@board, start_spot, end_spot)
+      passant_spot = piece.en_passant_spot(start_spot, end_spot)
+    end
+    move_piece(piece, start_spot, end_spot, passant_spot)
+    promote(piece, piece_to_swap, end_spot) if piece.instance_of?(Pawn) && eligible_for_promotion?(piece, end_spot)
+    @board.display
+  end
+
+  def move_piece(piece, start_spot, end_spot, passant_spot = nil)
+    target_spot_piece = passant_spot ? @board.get_piece(passant_spot) : @board.get_piece(end_spot)
+    defeat_piece(target_spot_piece, passant_spot) unless target_spot_piece.nil?
+    @board.grid[start_spot[0]][start_spot[1]].piece = nil
+    @board.grid[end_spot[0]][end_spot[1]].piece = piece
+  end
+
+  def defeat_piece(target_spot_piece, passant_spot)
+    target_spot_piece.defeated = true
+    @board.grid[passant_spot[0]][passant_spot[1]].piece = nil if passant_spot
   end
 
   def eligible_for_promotion?(piece, end_spot)
@@ -135,5 +127,13 @@ class Game
 
   def promote(piece, piece_to_swap, end_spot)
     @board.grid[end_spot[0]][end_spot[1]].piece = piece_to_swap.new(piece.color, piece.move)
+  end
+
+  def game_over?
+    false
+  end
+
+  def game_end
+    puts GAME_END
   end
 end
