@@ -1,10 +1,10 @@
 class King < Piece
   attr_accessor :symbol, :move
 
-  def initialize(color)
+  def initialize(color, move = 1)
     super(color)
-    @symbol = set_symbol    
-    @move = 1
+    @symbol = set_symbol 
+    @move = move
   end
 
   def set_symbol

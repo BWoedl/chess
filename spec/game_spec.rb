@@ -6,7 +6,8 @@ describe Game do
   let(:board) { double('board') }
   let(:king) { double('king', class: King, color: 'white', move: 1, defeated: false) }
   let(:queen) { double('queen', class: Queen, color: 'black', move: 1, defeated: false) }
-  let(:pawn) { double('pawn', class: Pawn, color: 'white', move: 1, defeated: false) }
+  let(:white_pawn) { double('pawn', class: Pawn, color: 'white', move: 1, defeated: false) }
+  let(:black_pawn) { double('pawn', class: Pawn, color: 'black', move: 1, defeated: false) }
   let(:p_spot) { double('spot', piece: Pawn) }
   let(:e_spot) { double('spot') }
   let(:k_spot) { double('spot', piece: king) }
@@ -171,19 +172,19 @@ describe Game do
       before do
         allow(subject).to receive(:move_piece)
         allow(board).to receive(:display)
-        allow(pawn).to receive(:move=)
-        allow(pawn).to receive(:instance_of?).and_return(true)
+        allow(white_pawn).to receive(:move=)
+        allow(white_pawn).to receive(:instance_of?).and_return(true)
       end
       it 'assigns passant_spot if it is a valid passing move' do
-        allow(pawn).to receive(:en_passant?).and_return(true) 
-        allow(pawn).to receive(:en_passant_spot).and_return([4, 5]).once
-        expect(subject).to receive(:move_piece).with(pawn, [4, 4], [5, 5], [4, 5])
-        subject.update_board(pawn, [4, 4], [5, 5])
+        allow(white_pawn).to receive(:en_passant?).and_return(true)
+        allow(white_pawn).to receive(:en_passant_spot).and_return([4, 5]).once
+        expect(subject).to receive(:move_piece).with(white_pawn, [4, 4], [5, 5], [4, 5])
+        subject.update_board(white_pawn, [4, 4], [5, 5])
       end
       it 'does not assign passant_spot if it is an invalid passing move' do 
-        allow(pawn).to receive(:en_passant?).and_return(false)
-        expect(subject).to receive(:move_piece).with(pawn, [4, 4], [5, 5], nil)
-        subject.update_board(pawn, [4, 4], [5, 5])
+        allow(white_pawn).to receive(:en_passant?).and_return(false)
+        expect(subject).to receive(:move_piece).with(white_pawn, [4, 4], [5, 5], nil)
+        subject.update_board(white_pawn, [4, 4], [5, 5])
       end
     end
   end
@@ -270,6 +271,29 @@ describe Game do
       end
       it 'returns false' do
         expect(subject.own_piece?(player1, e_spot)).to be false
+      end
+    end
+  end
+
+  describe '.eligible_for_promotion?' do
+    context 'it is a white pawn at its start side of the board (bottom)' do
+      it 'returns false' do
+        expect(subject.eligible_for_promotion?(white_pawn, [0, 2])).to be false
+      end
+    end
+    context 'it is a black pawn at its start side of the board (top)' do
+      it 'returns false' do
+        expect(subject.eligible_for_promotion?(black_pawn, [7, 4])).to be false
+      end
+    end
+    context 'it is a black pawn opposite its start side of the board (bottom)' do
+      it 'returns true' do
+        expect(subject.eligible_for_promotion?(black_pawn, [0, 4])).to be true
+      end
+    end
+    context 'it is a white pawn opposite its start side of the board (top)' do 
+      it 'returns true' do
+        expect(subject.eligible_for_promotion?(white_pawn, [7, 2])).to be true
       end
     end
   end

@@ -47,6 +47,7 @@ class Game
       passant_spot = piece.en_passant_spot(start_spot, end_spot)
     end
     move_piece(piece, start_spot, end_spot, passant_spot)
+    promote(piece, piece_to_swap, end_spot) if piece.instance_of?(Pawn) && eligible_for_promotion?(piece, end_spot)
     @board.display
   end
 
@@ -111,5 +112,28 @@ class Game
 
   def game_end
     puts GAME_END
+  end
+
+  def eligible_for_promotion?(piece, end_spot)
+    return true if piece.color == 'white' && end_spot[0] == 7
+    return true if piece.color == 'black' && end_spot[0] == 0
+
+    false
+  end
+
+  def piece_to_swap(selection = nil)
+    pieces = [Queen, Bishop, Rook, Knight]
+    puts 'Which piece would you like to swap your pawn for? Type Queen, Bishop, Rook, or Knight'
+    input = gets.chomp.capitalize
+    until pieces.to_s.include?(input)
+      puts "That's not a valid option! Which piece would you like to swap your pawn for? Type Queen, Bishop, Rook, or Knight"
+      input = gets.chomp.capitalize
+    end
+    pieces.each { |piece| selection = piece if piece.to_s.match(input) }
+    selection
+  end
+
+  def promote(piece, piece_to_swap, end_spot)
+    @board.grid[end_spot[0]][end_spot[1]].piece = piece_to_swap.new(piece.color, piece.move)
   end
 end

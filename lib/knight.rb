@@ -3,10 +3,10 @@ class Knight < Piece
 
   MOVES = [[-1, -2], [1, 2], [-1, 2], [1, -2], [-2, -1], [2, 1], [-2, 1], [2, -1]]
 
-  def initialize(color)
+  def initialize(color, move = 1)
     super(color)
     @symbol = set_symbol
-    @move = 1
+    @move = move
   end
 
   def set_symbol
