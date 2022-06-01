@@ -115,4 +115,15 @@ describe Pawn do
       expect(white_pawn.en_passant_spot([4, 4], [5,5])).to eq(spot)
     end
   end
+
+  describe '.occupied?' do
+    context 'if forward spot is filled with piece' do
+      xit 'returns true' do
+      end
+    end
+    context 'if forward spot is empty' do
+      xit 'returns false' do
+      end
+    end
+  end
 end

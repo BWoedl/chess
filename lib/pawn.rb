@@ -16,9 +16,18 @@ class Pawn < Piece
     col_move = end_spot[1] - start_spot[1]
     return false if occupied_by_same_color?(board, end_spot)
     return true if capture?(board, start_spot, end_spot)
+    return false if occupied?(board, end_spot)
     return legal_first_move?(start_spot, end_spot) if move == 1
     return true if color == 'black' && col_move.zero? && row_move == -1
     return true if color == 'white' && col_move.zero? && row_move == 1
+
+    false
+  end
+
+  def occupied?(board, end_spot)
+    target_spot_piece = board.get_piece(end_spot)
+    return true unless target_spot_piece.nil?
+
     false
   end
 
@@ -26,6 +35,7 @@ class Pawn < Piece
     row_move = end_spot[0] - start_spot[0]
     return true if color == 'black' && start_spot[1] == end_spot[1] && row_move.between?(-2, -1)
     return true if color == 'white' && start_spot[1] == end_spot[1] && row_move.between?(1, 2)
+
     false
   end
 
