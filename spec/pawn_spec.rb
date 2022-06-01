@@ -7,7 +7,7 @@ describe Pawn do
   let(:white_pawn) { Pawn.new('white') }
   let(:black_pawn) { Pawn.new('black') }
   let(:board) { double('board') }
-  let(:king) { double('king') }
+  let(:king) { double('king', color: 'white') }
 
   describe '.legal_move? for black pawn' do
     context 'moves one space down the board' do
@@ -28,6 +28,12 @@ describe Pawn do
         black_pawn.instance_variable_set(:@move, 2)
         allow(board).to receive(:get_piece).and_return(nil)
         expect(black_pawn.legal_move?(board, [6, 3], [4, 3])).to be(false)
+      end
+    end
+    context 'cannot move foward if spot is occupied' do
+      it 'returns false' do
+        allow(board).to receive(:get_piece).and_return(king)
+        expect(black_pawn.legal_move?(board, [6, 3], [5, 3])).to be(false)
       end
     end
     context 'moves diagonally when no piece in the target spot' do
@@ -118,11 +124,19 @@ describe Pawn do
 
   describe '.occupied?' do
     context 'if forward spot is filled with piece' do
-      xit 'returns true' do
+      before do 
+        expect(board).to receive(:get_piece).and_return(king)
+      end
+      it 'returns true' do
+        expect(white_pawn.occupied?(board, [5,4])).to be true
       end
     end
     context 'if forward spot is empty' do
-      xit 'returns false' do
+      before do 
+        expect(board).to receive(:get_piece).and_return(nil)
+      end
+      it 'returns false' do
+        expect(white_pawn.occupied?(board, [5,4])).to be false
       end
     end
   end
