@@ -133,7 +133,6 @@ describe Pawn do
 
   describe '.occupied?' do
     context 'if forward spot is filled with piece' do
-<<<<<<< HEAD
       it 'returns true' do
         allow(board).to receive(:get_piece).and_return(black_pawn)
         expect(white_pawn.occupied?(board, [5, 3])).to be true
@@ -143,7 +142,6 @@ describe Pawn do
       it 'returns false' do
         allow(board).to receive(:get_piece).and_return(nil)
         expect(white_pawn.occupied?(board, [5, 3])).to be false
->>>>>>> 9e732145508e98b94da461e32b892313ef461d9d
       end
     end
   end

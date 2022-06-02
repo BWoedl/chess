@@ -40,7 +40,6 @@ class Game
     end
   end
 
-<<<<<<< HEAD
   def update_board(piece, start_spot, end_spot, passant_spot = nil)
     @turn += 1
     piece.move += 1
@@ -53,7 +52,6 @@ class Game
     @board.display
   end
 
->>>>>>> 9e732145508e98b94da461e32b892313ef461d9d
   def piece_to_move
     puts "\n#{player_turn.name}" + OBTAIN_TARGET_PIECE
     input = gets.chomp
