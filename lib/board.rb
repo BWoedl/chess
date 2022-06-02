@@ -19,6 +19,7 @@ class Board
   def initialize(grid = create_board)
     @grid = grid
     setup_board_pieces
+    @last_piece_moved = nil
   end
 
   def get_piece(spot)

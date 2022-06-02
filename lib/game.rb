@@ -48,6 +48,7 @@ class Game
     end
     move_piece(piece, start_spot, end_spot, passant_spot)
     promote(piece, piece_to_swap, end_spot) if piece.instance_of?(Pawn) && eligible_for_promotion?(piece, end_spot)
+    @board.last_piece_moved = piece
     @board.display
   end
 

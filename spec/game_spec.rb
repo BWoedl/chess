@@ -164,6 +164,7 @@ describe Game do
         allow(subject).to receive(:move_piece)
         allow(board).to receive(:display)
         allow(king).to receive(:move=)
+        allow(board).to receive(:last_piece_moved=)
       end
       it 'increments the turn counter' do
         subject.instance_variable_set(:@turn, 1)
@@ -181,6 +182,7 @@ describe Game do
         allow(board).to receive(:display)
         allow(white_pawn).to receive(:move=)
         allow(white_pawn).to receive(:instance_of?).and_return(true)
+        allow(board).to receive(:last_piece_moved=)
       end
       it 'assigns passant_spot if it is a valid passing move' do
         allow(white_pawn).to receive(:en_passant?).and_return(true)

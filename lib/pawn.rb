@@ -24,6 +24,7 @@ class Pawn < Piece
     false
   end
 
+  # should be moved to a better class
   def occupied?(board, end_spot)
     target_spot_piece = board.get_piece(end_spot)
     return true unless target_spot_piece.nil?
@@ -42,7 +43,7 @@ class Pawn < Piece
   def capture?(board, start_spot, end_spot)
     return true if en_passant?(board, start_spot, end_spot)
     return false unless diagonal_move?(start_spot, end_spot) && (end_spot[0] - start_spot[0]).abs == 1
-    return false if board.get_piece(end_spot).nil? || board.get_piece(end_spot).color == color 
+    return false if board.get_piece(end_spot).nil? || board.get_piece(end_spot).color == color
 
     true
   end
@@ -50,7 +51,7 @@ class Pawn < Piece
   def en_passant?(board, start_spot, end_spot)
     piece_to_pass = board.get_piece(en_passant_spot(start_spot, end_spot))
     return false if piece_to_pass.nil?
-    return false unless piece_to_pass.instance_of?(Pawn) && piece_to_pass.move == 2
+    return false unless piece_to_pass.instance_of?(Pawn) && piece_to_pass.move == 2 && board.last_piece_moved == piece_to_pass
 
     true
   end
