@@ -40,18 +40,6 @@ class Game
     end
   end
 
-  def update_board(piece, start_spot, end_spot, passant_spot = nil)
-    @turn += 1
-    piece.move += 1
-    if piece.instance_of?(Pawn) && piece.en_passant?(@board, start_spot, end_spot)
-      passant_spot = piece.en_passant_spot(start_spot, end_spot)
-    end
-    move_piece(piece, start_spot, end_spot, passant_spot)
-    promote(piece, piece_to_swap, end_spot) if piece.instance_of?(Pawn) && eligible_for_promotion?(piece, end_spot)
-    @board.last_piece_moved = piece
-    @board.display
-  end
-
   def piece_to_move
     puts "\n#{player_turn.name}" + OBTAIN_TARGET_PIECE
     input = gets.chomp
