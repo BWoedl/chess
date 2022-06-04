@@ -11,6 +11,7 @@ class Game
   ILLEGAL_MOVE = "That's an illegal move for your piece. Try again!"
   GAME_END = "Game over! "
   OBTAIN_TARGET_PIECE = ", please put the column and row of the piece you'd like to move. Ex: a4"
+  CHECK = "king is now in check"
 
   def initialize(player1, player2, board = Board.new)
     @board = board
@@ -83,15 +84,21 @@ class Game
     piece.legal_move?(@board, start_spot, end_spot) && start_spot != end_spot
   end
 
-  def update_board(piece, start_spot, end_spot, passant_spot = nil)
+  def update_board(piece, start_spot, end_spot, passant_spot)
     @turn += 1
     piece.move += 1
-    if piece.instance_of?(Pawn) && piece.en_passant?(@board, start_spot, end_spot)
-      passant_spot = piece.en_passant_spot(start_spot, end_spot)
-    end
+    passant_spot = passant?(piece, start_spot, end_spot)
     move_piece(piece, start_spot, end_spot, passant_spot)
     promote(piece, piece_to_swap, end_spot) if piece.instance_of?(Pawn) && eligible_for_promotion?(piece, end_spot)
     @board.display
+  end
+
+  def passant?(piece, start_spot, end_spot)
+    if piece.instance_of?(Pawn) && piece.en_passant?(@board, start_spot, end_spot)
+      return piece.en_passant_spot(start_spot, end_spot)
+    end
+
+    nil
   end
 
   def move_piece(piece, start_spot, end_spot, passant_spot = nil)
