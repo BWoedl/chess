@@ -11,7 +11,9 @@ class Game
   ILLEGAL_MOVE = "That's an illegal move for your piece. Try again!"
   GAME_END = "Game over! "
   OBTAIN_TARGET_PIECE = ", please put the column and row of the piece you'd like to move. Ex: a4"
-  CHECK = "king is now in check"
+  CHECK = 'king is now in check'
+  PROMOTION_PROMPT = 'Which piece would you like to swap your pawn for? Type Queen, Bishop, Rook, or Knight'
+  INVALID_PROMOTION_PROMPT = "That's not a valid option! Which piece would you like to swap your pawn for? Type Queen, Bishop, Rook, or Knight"
 
   def initialize(player1, player2, board = Board.new)
     @board = board
@@ -35,7 +37,12 @@ class Game
     end_spot = convert_input(spot_to_move)
     piece = @board.get_piece(start_spot)
     if valid_turn?(piece, start_spot, end_spot)
-      update_board(piece, start_spot, end_spot)
+      update_board(@board, piece, start_spot, end_spot, nil)
+      promote(piece, piece_to_swap, end_spot) if piece.instance_of?(Pawn) && eligible_for_promotion?(piece, end_spot)
+      @turn += 1
+      piece.move += 1
+      @board.last_piece_moved = piece
+      @board.display
     else
       puts ILLEGAL_MOVE
     end
@@ -81,36 +88,50 @@ class Game
   end
 
   def valid_turn?(piece, start_spot, end_spot)
-    piece.legal_move?(@board, start_spot, end_spot) && start_spot != end_spot
+    if piece.legal_move?(@board, start_spot, end_spot) && start_spot != end_spot && !puts_king_in_check?(piece, start_spot, end_spot)
+      return true
+    end
+
+    false
   end
 
-  def update_board(piece, start_spot, end_spot, passant_spot)
-    @turn += 1
-    piece.move += 1
-    passant_spot = passant?(piece, start_spot, end_spot)
-    move_piece(piece, start_spot, end_spot, passant_spot)
-    promote(piece, piece_to_swap, end_spot) if piece.instance_of?(Pawn) && eligible_for_promotion?(piece, end_spot)
-    @board.display
+  def puts_king_in_check?(piece, start_spot, end_spot)
+    test_board = Board.new
+    test_board.grid.flatten.map { |spot| spot.piece = nil }
+    copied_spots = [@board.active_opponent_spots('white'), @board.active_opponent_spots('black')].flatten
+    copied_spots.each { |spot| test_board.grid[spot.x][spot.y].piece = spot.piece.class.new(spot.piece.color) }
+    piece_to_move = test_board.grid[start_spot[0]][start_spot[1]].piece
+    update_board(test_board, piece_to_move, start_spot, end_spot)
+    test_board.check?(piece_to_move.color)
   end
 
-  def passant?(piece, start_spot, end_spot)
-    if piece.instance_of?(Pawn) && piece.en_passant?(@board, start_spot, end_spot)
+  # def clone_board
+
+  # end
+
+  def update_board(board, piece, start_spot, end_spot, passant_spot = nil)
+    passant_spot = passant?(board, piece, start_spot, end_spot)
+    move_piece(board, piece, start_spot, end_spot, passant_spot)
+  end
+
+  def passant?(board, piece, start_spot, end_spot)
+    if piece.instance_of?(Pawn) && piece.en_passant?(board, start_spot, end_spot)
       return piece.en_passant_spot(start_spot, end_spot)
     end
 
     nil
   end
 
-  def move_piece(piece, start_spot, end_spot, passant_spot = nil)
-    target_spot_piece = passant_spot ? @board.get_piece(passant_spot) : @board.get_piece(end_spot)
-    defeat_piece(target_spot_piece, passant_spot) unless target_spot_piece.nil?
-    @board.grid[start_spot[0]][start_spot[1]].piece = nil
-    @board.grid[end_spot[0]][end_spot[1]].piece = piece
+  def move_piece(board, piece, start_spot, end_spot, passant_spot = nil)
+    target_spot_piece = passant_spot ? board.get_piece(passant_spot) : board.get_piece(end_spot)
+    defeat_piece(board, target_spot_piece, passant_spot) unless target_spot_piece.nil?
+    board.grid[start_spot[0]][start_spot[1]].piece = nil
+    board.grid[end_spot[0]][end_spot[1]].piece = piece
   end
 
-  def defeat_piece(target_spot_piece, passant_spot)
+  def defeat_piece(board, target_spot_piece, passant_spot)
     target_spot_piece.defeated = true
-    @board.grid[passant_spot[0]][passant_spot[1]].piece = nil if passant_spot
+    board.grid[passant_spot[0]][passant_spot[1]].piece = nil if passant_spot
   end
 
   def eligible_for_promotion?(piece, end_spot)
@@ -122,10 +143,10 @@ class Game
 
   def piece_to_swap(selection = nil)
     pieces = [Queen, Bishop, Rook, Knight]
-    puts 'Which piece would you like to swap your pawn for? Type Queen, Bishop, Rook, or Knight'
+    puts PROMOTION_PROMPT
     input = gets.chomp.capitalize
     until pieces.to_s.include?(input)
-      puts "That's not a valid option! Which piece would you like to swap your pawn for? Type Queen, Bishop, Rook, or Knight"
+      puts INVALID_PROMOTION_PROMPT
       input = gets.chomp.capitalize
     end
     pieces.each { |piece| selection = piece if piece.to_s.match(input) }

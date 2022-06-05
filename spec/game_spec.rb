@@ -150,12 +150,17 @@ describe Game do
         allow(king).to receive(:valid_turn?).and_return(true)
         allow(king).to receive(:legal_move?).and_return(true)
         allow(subject).to receive(:puts)
+        subject.instance_variable_set(:@turn, 1)
       end
       it 'calls to update the board' do
         expect(subject).to receive(:update_board).once
         subject.take_turn
       end
     end
+      xit 'increments the turn counter' do
+        subject.take_turn
+        expect(subject.instance_variable_get(:@turn)).to eq(2)
+      end
   end
 
   describe '.update_board' do
@@ -166,14 +171,9 @@ describe Game do
         allow(king).to receive(:move=)
         allow(board).to receive(:last_piece_moved=)
       end
-      it 'increments the turn counter' do
-        subject.instance_variable_set(:@turn, 1)
-        subject.update_board(king, [0, 0], [0, 1], nil)
-        expect(subject.instance_variable_get(:@turn)).to eq(2)
-      end
       it 'passant_spot remains as nil' do
-        expect(subject).to receive(:move_piece).with(king, [0, 0], [0, 1], nil)
-        subject.update_board(king, [0, 0], [0, 1], nil)
+        expect(subject).to receive(:move_piece).with(board, king, [0, 0], [0, 1], nil)
+        subject.update_board(board, king, [0, 0], [0, 1], nil)
       end
     end
     context 'when piece is a pawn' do
@@ -187,13 +187,13 @@ describe Game do
       it 'assigns passant_spot if it is a valid passing move' do
         allow(white_pawn).to receive(:en_passant?).and_return([4, 5])
         allow(white_pawn).to receive(:en_passant_spot).and_return([4, 5]).once
-        expect(subject).to receive(:move_piece).with(white_pawn, [4, 4], [5, 5], [4, 5])
-        subject.update_board(white_pawn, [4, 4], [5, 5], nil)
+        expect(subject).to receive(:move_piece).with(board, white_pawn, [4, 4], [5, 5], [4, 5])
+        subject.update_board(board, white_pawn, [4, 4], [5, 5], nil)
       end
       it 'does not assign passant_spot if it is an invalid passing move' do
         allow(white_pawn).to receive(:en_passant?).and_return(false)
-        expect(subject).to receive(:move_piece).with(white_pawn, [4, 4], [5, 5], nil)
-        subject.update_board(white_pawn, [4, 4], [5, 5], nil)
+        expect(subject).to receive(:move_piece).with(board, white_pawn, [4, 4], [5, 5], nil)
+        subject.update_board(board, white_pawn, [4, 4], [5, 5], nil)
       end
     end
   end
@@ -214,7 +214,7 @@ describe Game do
         allow(e_spot).to receive(:piece=)
       end
       it 'does not call the defeat_piece method' do
-        subject.move_piece(king, [1, 1], [2, 2])
+        subject.move_piece(board, king, [1, 1], [2, 2])
         expect(subject).not_to receive(:defeat_piece)
       end
     end
@@ -235,11 +235,11 @@ describe Game do
       end
       it 'calls the defeat_piece method' do
         expect(subject).to receive(:defeat_piece)
-        subject.move_piece(king, [1, 1], [2, 2])
+        subject.move_piece(board, king, [1, 1], [2, 2])
       end
       it 'sets start spot as nil' do
         expect(k_spot).to receive(:piece=).with(nil)
-        subject.move_piece(king, [1, 1], [2, 2])
+        subject.move_piece(board, king, [1, 1], [2, 2])
       end
     end
   end

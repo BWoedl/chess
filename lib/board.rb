@@ -11,15 +11,15 @@ require_relative 'queen'
 require_relative 'pawn'
 
 class Board
-  attr_accessor :grid
+  attr_accessor :grid, :last_piece_moved
 
   CYAN_BG = '       '.bg_cyan
   GRAY_BG = '       '.bg_gray
 
   def initialize(grid = create_board)
     @grid = grid
-    setup_board_pieces
     @last_piece_moved = nil
+    setup_board_pieces
   end
 
   def get_piece(spot)
