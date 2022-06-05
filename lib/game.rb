@@ -1,19 +1,10 @@
 # frozen_string_literal: true
 
 require_relative 'board'
+require_relative 'messages'
 
 class Game
   attr_accessor :board
-
-  INVALID_PIECE = "Try again with a valid position! Select one of your pieces only\n"
-  INVALID_TARGET = "Try again with a valid position! It must be on the board\n"
-  OBTAIN_TARGET_SPOT = "\nNow put the column and row of the spot you'd like to move to. Ex: b4"
-  ILLEGAL_MOVE = "That's an illegal move for your piece. Try again!"
-  GAME_END = "Game over! "
-  OBTAIN_TARGET_PIECE = ", please put the column and row of the piece you'd like to move. Ex: a4"
-  CHECK = 'king is now in check'
-  PROMOTION_PROMPT = 'Which piece would you like to swap your pawn for? Type Queen, Bishop, Rook, or Knight'
-  INVALID_PROMOTION_PROMPT = "That's not a valid option! Which piece would you like to swap your pawn for? Type Queen, Bishop, Rook, or Knight"
 
   def initialize(player1, player2, board = Board.new)
     @board = board
@@ -44,25 +35,25 @@ class Game
       @board.last_piece_moved = piece
       @board.display
     else
-      puts ILLEGAL_MOVE
+      puts Messages::ILLEGAL_MOVE
     end
   end
 
   def piece_to_move
-    puts "\n#{player_turn.name}" + OBTAIN_TARGET_PIECE
+    puts "\n#{player_turn.name}" + Messages::OBTAIN_TARGET_PIECE
     input = gets.chomp
     until valid_input?(input) && own_piece?(player_turn, convert_input(input))
-      puts INVALID_PIECE
+      puts Messages::INVALID_PIECE
       input = gets.chomp
     end
     input
   end
 
   def spot_to_move
-    puts OBTAIN_TARGET_SPOT
+    puts Messages::OBTAIN_TARGET_SPOT
     input = gets.chomp
     until valid_input?(input)
-      puts INVALID_TARGET
+      puts Messages::INVALID_TARGET
       input = gets.chomp
     end
     input
@@ -144,10 +135,10 @@ class Game
 
   def piece_to_swap(selection = nil)
     pieces = [Queen, Bishop, Rook, Knight]
-    puts PROMOTION_PROMPT
+    puts Messages::PROMOTION_PROMPT
     input = gets.chomp.capitalize
     until pieces.to_s.include?(input)
-      puts INVALID_PROMOTION_PROMPT
+      puts Messages::INVALID_PROMOTION_PROMPT
       input = gets.chomp.capitalize
     end
     pieces.each { |piece| selection = piece if piece.to_s.match(input) }
@@ -163,6 +154,6 @@ class Game
   end
 
   def game_end
-    puts GAME_END
+    puts Messages::GAME_END
   end
 end
