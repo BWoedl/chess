@@ -110,12 +110,13 @@ describe Pawn do
     it 'returns false if the piece to pass is a pawn that just made its first move 2 spaces but was not the last move on the board' do
       black_pawn.instance_variable_set(:@move, 2)
       allow(board).to receive(:last_piece_moved).and_return(king)
-      allow(board).to receive(:get_piece).and_return(black_pawn)
+      allow(board).to receive(:get_piece).with([4, 3]).and_return(black_pawn)
       expect(white_pawn.en_passant?(board, [4, 4], [5, 3])).to be false
     end
     it 'returns true if the piece to pass is a pawn that just made its first move 2 spaces and was just the last move' do
       black_pawn.instance_variable_set(:@move, 2)
-      allow(board).to receive(:get_piece).and_return(black_pawn)
+      allow(board).to receive(:get_piece).with([4, 3]).and_return(black_pawn)
+      allow(board).to receive(:get_piece).with([5, 3]).and_return(nil)
       allow(board).to receive(:last_piece_moved).and_return(black_pawn)
       expect(white_pawn.en_passant?(board, [4, 4], [5, 3])).to be true
     end

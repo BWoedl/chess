@@ -88,26 +88,27 @@ class Game
   end
 
   def valid_turn?(piece, start_spot, end_spot)
-    if piece.legal_move?(@board, start_spot, end_spot) && start_spot != end_spot && !puts_king_in_check?(piece, start_spot, end_spot)
+    if piece.legal_move?(@board, start_spot, end_spot) && start_spot != end_spot && !puts_king_in_check?(start_spot, end_spot)
       return true
     end
 
     false
   end
 
-  def puts_king_in_check?(piece, start_spot, end_spot)
+  def puts_king_in_check?(start_spot, end_spot)
+    test_board = clone_board
+    piece = test_board.grid[start_spot[0]][start_spot[1]].piece
+    update_board(test_board, piece, start_spot, end_spot)
+    test_board.check?(piece.color)
+  end
+
+  def clone_board
     test_board = Board.new
     test_board.grid.flatten.map { |spot| spot.piece = nil }
     copied_spots = [@board.active_opponent_spots('white'), @board.active_opponent_spots('black')].flatten
     copied_spots.each { |spot| test_board.grid[spot.x][spot.y].piece = spot.piece.class.new(spot.piece.color) }
-    piece_to_move = test_board.grid[start_spot[0]][start_spot[1]].piece
-    update_board(test_board, piece_to_move, start_spot, end_spot)
-    test_board.check?(piece_to_move.color)
+    test_board
   end
-
-  # def clone_board
-
-  # end
 
   def update_board(board, piece, start_spot, end_spot, passant_spot = nil)
     passant_spot = passant?(board, piece, start_spot, end_spot)

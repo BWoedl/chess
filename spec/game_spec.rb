@@ -8,7 +8,8 @@ describe Game do
   let(:queen) { double('queen', class: Queen, color: 'black', move: 1, defeated: false) }
   let(:white_pawn) { double('pawn', class: Pawn, color: 'white', move: 1, defeated: false) }
   let(:black_pawn) { double('pawn', class: Pawn, color: 'black', move: 1, defeated: false) }
-  let(:p_spot) { double('spot', piece: Pawn) }
+  let(:p_spot_w) { double('spot1', piece: white_pawn) }
+  let(:p_spot_b) { double('spot1', piece: black_pawn) }
   let(:e_spot) { double('spot') }
   let(:k_spot) { double('spot', piece: king) }
   let(:q_spot) { double('spot', piece: queen) }
@@ -68,6 +69,11 @@ describe Game do
 
   describe '.valid_turn?' do
     context 'checks if a player tries remain in the same space' do
+      before do
+        allow(board).to receive(:active_opponent_spots).and_return([p_spot_w])
+        allow(p_spot_w).to receive(:x).and_return(2)
+        allow(p_spot_w).to receive(:y).and_return(3)
+      end
       it 'returns true if spots are different' do
         allow(king).to receive(:legal_move?).with(board, [2, 3], [2, 5]).and_return(true)
         expect(subject.valid_turn?(king, [2, 3], [2, 5])).to be true
@@ -151,16 +157,19 @@ describe Game do
         allow(king).to receive(:legal_move?).and_return(true)
         allow(subject).to receive(:puts)
         subject.instance_variable_set(:@turn, 1)
+        allow(board).to receive(:active_opponent_spots).and_return([p_spot_w])
+        allow(p_spot_w).to receive(:x).and_return(7)
+        allow(p_spot_w).to receive(:y).and_return(2)
+        allow(king).to receive(:move=)
+        allow(board).to receive(:last_piece_moved=)
+        allow(king).to receive(:defeated=)
+        allow(board).to receive(:display)
       end
       it 'calls to update the board' do
-        expect(subject).to receive(:update_board).once
+        expect(subject).to receive(:update_board).twice
         subject.take_turn
       end
     end
-      xit 'increments the turn counter' do
-        subject.take_turn
-        expect(subject.instance_variable_get(:@turn)).to eq(2)
-      end
   end
 
   describe '.update_board' do
@@ -248,12 +257,12 @@ describe Game do
     it 'it changes the defeated attribute on a direct capture' do
       target_spot_piece = queen
       expect(target_spot_piece).to receive(:defeated=)
-      subject.defeat_piece(queen, nil)
+      subject.defeat_piece(board, queen, nil)
     end
     it 'it changes the defeated attribute on an en passant move' do
       target_spot_piece = queen
       expect(target_spot_piece).to receive(:defeated=)
-      subject.defeat_piece(queen, nil)
+      subject.defeat_piece(board, queen, nil)
     end
   end
 
@@ -304,6 +313,54 @@ describe Game do
       it 'returns true' do
         expect(subject.eligible_for_promotion?(white_pawn, [7, 2])).to be true
       end
+    end
+  end
+
+  describe '.puts king in check' do 
+    context 'after the test board is updated, there are no legal moves to put the king in check' do 
+      before do 
+        allow(board).to receive(:active_opponent_spots).and_return([p_spot_w])
+        allow(p_spot_w).to receive(:x).and_return(7)
+        allow(p_spot_w).to receive(:y).and_return(2)
+      end
+      it 'returns false' do
+        expect(subject.puts_king_in_check?([7, 2], [4, 4])).to be false
+      end
+    end
+    context 'after the test board is updated, there is a legal move to put the king in check' do
+      before do 
+        allow(board).to receive(:active_opponent_spots).and_return([p_spot_w, q_spot, p_spot_b, k_spot])
+        allow(p_spot_w).to receive(:x).and_return(4)
+        allow(p_spot_w).to receive(:y).and_return(2)        
+        allow(q_spot).to receive(:x).and_return(7)
+        allow(q_spot).to receive(:y).and_return(4)
+        allow(p_spot_b).to receive(:x).and_return(5)
+        allow(p_spot_b).to receive(:y).and_return(5)
+        allow(k_spot).to receive(:x).and_return(6)
+        allow(k_spot).to receive(:y).and_return(4)
+        allow(queen).to receive(:legal_move?).and_return(true)
+      end
+      it 'returns true' do
+        start_spot = [4, 2]
+        end_spot = [4, 4]
+        expect(subject.puts_king_in_check?(start_spot, end_spot)).to be true
+      end
+    end
+  end
+
+  describe '.clone board' do
+    before do 
+      allow(board).to receive(:active_opponent_spots).and_return([p_spot_w])
+      allow(p_spot_w).to receive(:x).and_return(7)
+      allow(p_spot_w).to receive(:y).and_return(2)
+    end
+    it 'returns a new board' do
+      expect(subject.clone_board).to be_instance_of(Board)
+    end
+    it  'includes pieces in the same spots as the cloned board' do
+      test_board = subject.clone_board
+      test_board.get_piece([7, 2])
+      expect(test_board.get_piece([7, 2])).to be_instance_of(Pawn)
     end
   end
 
