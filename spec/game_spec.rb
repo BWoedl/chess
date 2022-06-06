@@ -205,6 +205,10 @@ describe Game do
         subject.update_board(board, white_pawn, [4, 4], [5, 5], nil)
       end
     end
+    context 'when it is a castling move' do
+      xit 'calls the move_rook_for_castling method' do 
+      end
+    end
   end
 
   describe '.move_piece' do
@@ -361,6 +365,13 @@ describe Game do
       test_board = subject.clone_board
       test_board.get_piece([7, 2])
       expect(test_board.get_piece([7, 2])).to be_instance_of(Pawn)
+    end
+  end
+
+  describe '.move_rook_for_castling' do
+    context '..' do 
+      xit '' do
+      end
     end
   end
 

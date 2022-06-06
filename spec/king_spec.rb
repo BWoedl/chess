@@ -33,5 +33,21 @@ describe King do
         expect(subject.legal_move?(board, [4, 3], [4, 4])).to be(false)
       end
     end
+    context 'is a valid castling move' do
+      xit 'returns true' do
+      end
+    end
+  end
+
+  describe '.castling_move?' do
+    context '...' do
+      xit '...' do
+      end
+    end
+  end
+
+  describe 'rook_spot_for_castling' do
+    xit 'returns the spot the rook that will be castled is in' do
+    end
   end
 end
