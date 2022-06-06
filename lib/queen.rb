@@ -15,7 +15,7 @@ class Queen < Piece
     operators = get_direction(start_spot, end_spot)
     path = generate_path(start_spot, end_spot, operators[0], operators[1])
     return false if occupied_by_same_color?(board, end_spot)
-    return false unless diagonal_move?(start_spot, end_spot) || operators[0] == 0 || operators[1] ==0
+    return false unless diagonal_move?(start_spot, end_spot) || orthogonal_move?(start_spot, end_spot)
     return true if intermediate_spots_open?(board, path)
 
     false
