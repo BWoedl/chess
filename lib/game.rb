@@ -103,6 +103,9 @@ class Game
 
   def update_board(board, piece, start_spot, end_spot, passant_spot = nil)
     passant_spot = passant?(board, piece, start_spot, end_spot)
+    if piece.instance_of?(King) && piece.castling_move?(board, start_spot, end_spot)
+      move_rook_for_castling(board, piece, start_spot, end_spot) 
+    end
     move_piece(board, piece, start_spot, end_spot, passant_spot)
   end
 
@@ -112,6 +115,13 @@ class Game
     end
 
     nil
+  end
+
+  def move_rook_for_castling(board, piece, start_spot, end_spot)
+    rook_spot = piece.rook_spot_for_castling(board, start_spot, end_spot)
+    rook_end_y_spot = start_spot[1] == 0 ? 3 : 5
+    rook = board.get_piece(rook_spot)
+    move_piece(board, rook, [rook_spot[0], rook_spot[1]], [rook_spot[0], rook_end_y_spot])
   end
 
   def move_piece(board, piece, start_spot, end_spot, passant_spot = nil)
