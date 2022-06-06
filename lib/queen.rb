@@ -8,14 +8,14 @@ class Queen < Piece
   end
 
   def set_symbol
-    color == 'white' ? '♚'.bold : '♚'.black
+    color == 'white' ? '♛'.bold : '♛'.black
   end
 
   def legal_move?(board, start_spot, end_spot)
-    return false if occupied_by_same_color?(board, end_spot)
     operators = get_direction(start_spot, end_spot)
-    return false unless diagonal_move?(start_spot, end_spot) || operators[0] == 0 || operators[1] ==0
     path = generate_path(start_spot, end_spot, operators[0], operators[1])
+    return false if occupied_by_same_color?(board, end_spot)
+    return false unless diagonal_move?(start_spot, end_spot) || operators[0] == 0 || operators[1] ==0
     return true if intermediate_spots_open?(board, path)
 
     false

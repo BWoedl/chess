@@ -20,6 +20,12 @@ class Piece
     false
   end
 
+  def orthogonal_move?(start_spot, end_spot)
+    return true if (start_spot[0] - end_spot[0]).zero? || (start_spot[1] - end_spot[1]).zero?
+    
+    false
+  end
+
   def generate_path(start_spot, end_spot, row_operator, col_operator, path = [])
     start_row = start_spot[0] + row_operator
     start_col = start_spot[1] + col_operator

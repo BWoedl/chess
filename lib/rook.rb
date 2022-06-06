@@ -14,7 +14,7 @@ class Rook < Piece
   def legal_move?(board, start_spot, end_spot)
     return false if occupied_by_same_color?(board, end_spot)
     operators = get_direction(start_spot, end_spot)
-    return false unless operators[0] == 0 || operators[1] ==0
+    return false unless orthogonal_move?(start_spot, end_spot)
     path = generate_path(start_spot, end_spot, operators[0], operators[1])
     return true if intermediate_spots_open?(board, path)
 

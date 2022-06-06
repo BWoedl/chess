@@ -89,6 +89,7 @@ class Board
     king_spot = find_king_spot(color)
     spots = active_opponent_spots(color)
     spots.each do |spot|
+      next if spot.piece.instance_of?(King)
       return true if spot.piece.legal_move?(self, [spot.x, spot.y], [king_spot.x, king_spot.y])
     end
     false
