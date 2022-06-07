@@ -1,3 +1,4 @@
+
 # frozen_string_literal: true
 
 require 'game'
@@ -79,6 +80,7 @@ describe Game do
         allow(board).to receive(:active_opponent_spots).and_return([p_spot_w])
         allow(p_spot_w).to receive(:x).and_return(2)
         allow(p_spot_w).to receive(:y).and_return(3)
+        allow(board).to receive(:puts_king_in_check?).and_return(false)
       end
       it 'returns true if spots are different' do
         allow(white_king).to receive(:legal_move?).with(board, [2, 3], [2, 5]).and_return(true)
@@ -170,121 +172,12 @@ describe Game do
         allow(board).to receive(:last_piece_moved=)
         allow(white_king).to receive(:defeated=)
         allow(board).to receive(:display)
+        allow(board).to receive(:puts_king_in_check?).and_return(false)
       end
       it 'calls to update the board' do
-        expect(subject).to receive(:update_board).twice
+        expect(board).to receive(:update).once
         subject.take_turn
       end
-    end
-  end
-
-  describe '.update_board' do
-    context 'when piece is not a pawn' do
-      before do
-        allow(subject).to receive(:move_piece)
-        allow(board).to receive(:display)
-        allow(white_king).to receive(:move=)
-        allow(board).to receive(:last_piece_moved=)
-      end
-      it 'passant_spot remains as nil' do
-        expect(subject).to receive(:move_piece).with(board, white_king, [0, 0], [0, 1], nil)
-        subject.update_board(board, white_king, [0, 0], [0, 1], nil)
-      end
-    end
-    context 'when piece is a pawn' do
-      before do
-        allow(subject).to receive(:move_piece)
-        allow(board).to receive(:display)
-        allow(white_pawn).to receive(:move=)
-        allow(white_pawn).to receive(:instance_of?).and_return(true)
-        allow(board).to receive(:last_piece_moved=)
-        allow(white_pawn).to receive(:instance_of?).with(King).and_return(false)
-      end
-      it 'assigns passant_spot if it is a valid passing move' do
-        allow(white_pawn).to receive(:en_passant?).and_return([4, 5])
-        allow(white_pawn).to receive(:en_passant_spot).and_return([4, 5]).once
-        expect(subject).to receive(:move_piece).with(board, white_pawn, [4, 4], [5, 5], [4, 5])
-        subject.update_board(board, white_pawn, [4, 4], [5, 5], nil)
-      end
-      it 'does not assign passant_spot if it is an invalid passing move' do
-        allow(white_pawn).to receive(:en_passant?).and_return(false)
-        expect(subject).to receive(:move_piece).with(board, white_pawn, [4, 4], [5, 5], nil)
-        subject.update_board(board, white_pawn, [4, 4], [5, 5], nil)
-      end
-    end
-    context 'when it is a castling move' do
-      before do
-        allow(subject).to receive(:move_piece)
-        allow(board).to receive(:display)
-        allow(white_king).to receive(:move=)
-        allow(board).to receive(:last_piece_moved=)
-        allow(board).to receive(:get_piece).and_return(white_rook, nil)
-        allow(white_king).to receive(:instance_of?).and_return(false, true)
-        allow(white_king).to receive(:castling_move?).and_return(true)
-      end
-      it 'calls the move_rook_for_castling method' do
-        expect(subject).to receive(:move_rook_for_castling)
-        subject.update_board(board, white_king, [0, 4], [0, 6], nil)
-      end
-    end
-  end
-
-  describe '.move_piece' do
-    context 'when there is no piece in the target spot' do
-      before do
-        allow(board).to receive(:grid).and_return([[e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                   [e_spot, k_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot]])
-        allow(board).to receive(:get_piece).with([2, 2]).and_return(nil)
-        allow(k_spot).to receive(:piece=)
-        allow(e_spot).to receive(:piece=)
-      end
-      it 'does not call the defeat_piece method' do
-        subject.move_piece(board, white_king, [1, 1], [2, 2])
-        expect(subject).not_to receive(:defeat_piece)
-      end
-    end
-    context 'when there is a piece in the target spot' do
-      before do
-        allow(board).to receive(:grid).and_return([[e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                   [e_spot, k_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                   [e_spot, e_spot, q_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                   [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot]])
-        allow(board).to receive(:get_piece).with([2, 2]).and_return(queen)
-        allow(queen).to receive(:defeated=)
-        allow(q_spot).to receive(:piece=)
-        allow(k_spot).to receive(:piece=)
-      end
-      it 'calls the defeat_piece method' do
-        expect(subject).to receive(:defeat_piece)
-        subject.move_piece(board, white_king, [1, 1], [2, 2])
-      end
-      it 'sets start spot as nil' do
-        expect(k_spot).to receive(:piece=).with(nil)
-        subject.move_piece(board, white_king, [1, 1], [2, 2])
-      end
-    end
-  end
-
-  describe 'defeat_piece' do
-    it 'it changes the defeated attribute on a direct capture' do
-      target_spot_piece = queen
-      expect(target_spot_piece).to receive(:defeated=)
-      subject.defeat_piece(board, queen, nil)
-    end
-    it 'it changes the defeated attribute on an en passant move' do
-      target_spot_piece = queen
-      expect(target_spot_piece).to receive(:defeated=)
-      subject.defeat_piece(board, queen, nil)
     end
   end
 
@@ -334,84 +227,6 @@ describe Game do
     context 'it is a white pawn opposite its start side of the board (top)' do
       it 'returns true' do
         expect(subject.eligible_for_promotion?(white_pawn, [7, 2])).to be true
-      end
-    end
-  end
-
-  describe '.puts king in check' do
-    context 'after the test board is updated, there are no legal moves to put the king in check' do
-      before do
-        allow(board).to receive(:active_opponent_spots).and_return([p_spot_w])
-        allow(p_spot_w).to receive(:x).and_return(7)
-        allow(p_spot_w).to receive(:y).and_return(2)
-      end
-      it 'returns false' do
-        expect(subject.puts_king_in_check?([7, 2], [4, 4])).to be false
-      end
-    end
-    context 'after the test board is updated, there is a legal move to put the king in check' do
-      before do
-        allow(board).to receive(:active_opponent_spots).and_return([p_spot_w, q_spot, p_spot_b, k_spot])
-        allow(p_spot_w).to receive(:x).and_return(4)
-        allow(p_spot_w).to receive(:y).and_return(2) 
-        allow(q_spot).to receive(:x).and_return(7)
-        allow(q_spot).to receive(:y).and_return(4)
-        allow(p_spot_b).to receive(:x).and_return(5)
-        allow(p_spot_b).to receive(:y).and_return(5)
-        allow(k_spot).to receive(:x).and_return(6)
-        allow(k_spot).to receive(:y).and_return(4)
-        allow(queen).to receive(:legal_move?).and_return(true)
-      end
-      it 'returns true' do
-        start_spot = [4, 2]
-        end_spot = [4, 4]
-        expect(subject.puts_king_in_check?(start_spot, end_spot)).to be true
-      end
-    end
-  end
-
-  describe '.clone board' do
-    before do
-      allow(board).to receive(:active_opponent_spots).and_return([p_spot_w])
-      allow(p_spot_w).to receive(:x).and_return(7)
-      allow(p_spot_w).to receive(:y).and_return(2)
-    end
-    it 'returns a new board' do
-      expect(subject.clone_board).to be_instance_of(Board)
-    end
-    it 'includes pieces in the same spots as the cloned board' do
-      test_board = subject.clone_board
-      test_board.get_piece([7, 2])
-      expect(test_board.get_piece([7, 2])).to be_instance_of(Pawn)
-    end
-  end
-
-  describe '.move_rook_for_castling' do
-    before do
-      allow(board).to receive(:grid).and_return([[e_spot, e_spot, e_spot, e_spot, k_spot_b, e_spot, e_spot, r_spot_b],
-                                                 [e_spot, k_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                 [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                 [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                 [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                 [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                 [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
-                                                 [r_spot_w, e_spot, e_spot, e_spot, k_spot, e_spot, e_spot, e_spot]])
-      allow(e_spot).to receive(:piece=)
-    end
-    context 'moves a white rook on the left side' do
-      it 'calls for the rook to be moved to the left of the king' do
-        allow(white_king).to receive(:rook_spot_for_castling).and_return([0, 0])
-        allow(board).to receive(:get_piece).and_return(white_rook, nil)
-        expect(subject).to receive(:move_piece).with(board, white_rook, [0, 0], [0, 3])
-        subject.move_rook_for_castling(board, white_king, [0, 4], [0, 2])
-      end
-    end
-    context 'moves a black rook on the right side' do
-      it 'calls for the rook to be moved to the right of the king' do
-        allow(black_king).to receive(:rook_spot_for_castling).and_return([7, 7])
-        allow(board).to receive(:get_piece).and_return(black_rook, nil)
-        expect(subject).to receive(:move_piece).with(board, black_rook, [7, 7], [7, 5])
-        subject.move_rook_for_castling(board, black_king, [7, 4], [7, 6])
       end
     end
   end
