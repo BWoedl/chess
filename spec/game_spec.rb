@@ -4,14 +4,20 @@ require 'game'
 
 describe Game do
   let(:board) { double('board') }
-  let(:king) { double('king', class: King, color: 'white', move: 1, defeated: false) }
+  let(:white_king) { double('king', class: King, color: 'white', move: 1, defeated: false) }
+  let(:black_king) { double('king', class: King, color: 'black', move: 1, defeated: false) }
   let(:queen) { double('queen', class: Queen, color: 'black', move: 1, defeated: false) }
   let(:white_pawn) { double('pawn', class: Pawn, color: 'white', move: 1, defeated: false) }
   let(:black_pawn) { double('pawn', class: Pawn, color: 'black', move: 1, defeated: false) }
+  let(:white_rook) { double('rook', class: Rook, color: 'white', move: 1, defeated: false) }
+  let(:black_rook) { double('rook', class: Rook, color: 'black', move: 1, defeated: false) }
   let(:p_spot_w) { double('spot1', piece: white_pawn) }
   let(:p_spot_b) { double('spot1', piece: black_pawn) }
   let(:e_spot) { double('spot') }
-  let(:k_spot) { double('spot', piece: king) }
+  let(:k_spot) { double('spot', piece: white_king) }
+  let(:k_spot_b) { double('spot', piece: black_king) }  
+  let(:r_spot_w) { double('spot', piece: white_rook) }
+  let(:r_spot_b) { double('spot', piece: black_rook) }
   let(:q_spot) { double('spot', piece: queen) }
   let(:player1) { double('player', name: 'Dingo', color: 'white') }
   let(:player2) { double('player', name: 'Huckleberry', color: 'black') }
@@ -75,12 +81,12 @@ describe Game do
         allow(p_spot_w).to receive(:y).and_return(3)
       end
       it 'returns true if spots are different' do
-        allow(king).to receive(:legal_move?).with(board, [2, 3], [2, 5]).and_return(true)
-        expect(subject.valid_turn?(king, [2, 3], [2, 5])).to be true
+        allow(white_king).to receive(:legal_move?).with(board, [2, 3], [2, 5]).and_return(true)
+        expect(subject.valid_turn?(white_king, [2, 3], [2, 5])).to be true
       end
       it 'returns false if spots are the same' do
-        allow(king).to receive(:legal_move?).with(board, [3, 4], [3, 4]).and_return(true)
-        expect(subject.valid_turn?(king, [3, 4], [3, 4])). to be false
+        allow(white_king).to receive(:legal_move?).with(board, [3, 4], [3, 4]).and_return(true)
+        expect(subject.valid_turn?(white_king, [3, 4], [3, 4])). to be false
       end
     end
   end
@@ -97,7 +103,7 @@ describe Game do
     it 'returns an array with row and column number' do
       allow(subject).to receive(:puts)
       allow(subject).to receive(:gets).and_return('b4')
-      allow(board).to receive(:get_piece).and_return(king)
+      allow(board).to receive(:get_piece).and_return(white_king)
       expect(subject.piece_to_move).to eq('b4')
     end
   end
@@ -121,8 +127,8 @@ describe Game do
       before do
         allow(subject).to receive(:game_over?).and_return(false, true)
         allow(subject).to receive(:gets).and_return('a2', 'a3')
-        allow(board).to receive(:get_piece).and_return(king)
-        allow(king).to receive(:legal_move?).with(0, 1).and_return(true)
+        allow(board).to receive(:get_piece).and_return(white_king)
+        allow(white_king).to receive(:legal_move?).with(0, 1).and_return(true)
         allow(subject).to receive(:puts)
         allow(board).to receive(:display)
       end
@@ -138,9 +144,9 @@ describe Game do
       before do
         allow(subject).to receive(:gets).and_return('c8', 'e8')
         allow(board).to receive(:grid)
-        allow(board).to receive(:get_piece).and_return(king, king)
-        allow(king).to receive(:valid_turn?).and_return(false)
-        allow(king).to receive(:legal_move?).and_return(false)
+        allow(board).to receive(:get_piece).and_return(white_king, white_king)
+        allow(white_king).to receive(:valid_turn?).and_return(false)
+        allow(white_king).to receive(:legal_move?).and_return(false)
         allow(subject).to receive(:puts)
       end
       it 'does not update the board' do
@@ -152,17 +158,17 @@ describe Game do
       before do
         allow(subject).to receive(:gets).and_return('c8', 'd8')
         allow(board).to receive(:grid)
-        allow(board).to receive(:get_piece).and_return(king, king)
-        allow(king).to receive(:valid_turn?).and_return(true)
-        allow(king).to receive(:legal_move?).and_return(true)
+        allow(board).to receive(:get_piece).and_return(white_king, white_king)
+        allow(white_king).to receive(:valid_turn?).and_return(true)
+        allow(white_king).to receive(:legal_move?).and_return(true)
         allow(subject).to receive(:puts)
         subject.instance_variable_set(:@turn, 1)
         allow(board).to receive(:active_opponent_spots).and_return([p_spot_w])
         allow(p_spot_w).to receive(:x).and_return(7)
         allow(p_spot_w).to receive(:y).and_return(2)
-        allow(king).to receive(:move=)
+        allow(white_king).to receive(:move=)
         allow(board).to receive(:last_piece_moved=)
-        allow(king).to receive(:defeated=)
+        allow(white_king).to receive(:defeated=)
         allow(board).to receive(:display)
       end
       it 'calls to update the board' do
@@ -177,12 +183,12 @@ describe Game do
       before do
         allow(subject).to receive(:move_piece)
         allow(board).to receive(:display)
-        allow(king).to receive(:move=)
+        allow(white_king).to receive(:move=)
         allow(board).to receive(:last_piece_moved=)
       end
       it 'passant_spot remains as nil' do
-        expect(subject).to receive(:move_piece).with(board, king, [0, 0], [0, 1], nil)
-        subject.update_board(board, king, [0, 0], [0, 1], nil)
+        expect(subject).to receive(:move_piece).with(board, white_king, [0, 0], [0, 1], nil)
+        subject.update_board(board, white_king, [0, 0], [0, 1], nil)
       end
     end
     context 'when piece is a pawn' do
@@ -192,6 +198,7 @@ describe Game do
         allow(white_pawn).to receive(:move=)
         allow(white_pawn).to receive(:instance_of?).and_return(true)
         allow(board).to receive(:last_piece_moved=)
+        allow(white_pawn).to receive(:instance_of?).with(King).and_return(false)
       end
       it 'assigns passant_spot if it is a valid passing move' do
         allow(white_pawn).to receive(:en_passant?).and_return([4, 5])
@@ -206,7 +213,18 @@ describe Game do
       end
     end
     context 'when it is a castling move' do
-      xit 'calls the move_rook_for_castling method' do 
+      before do
+        allow(subject).to receive(:move_piece)
+        allow(board).to receive(:display)
+        allow(white_king).to receive(:move=)
+        allow(board).to receive(:last_piece_moved=)
+        allow(board).to receive(:get_piece).and_return(white_rook, nil)
+        allow(white_king).to receive(:instance_of?).and_return(false, true)
+        allow(white_king).to receive(:castling_move?).and_return(true)
+      end
+      it 'calls the move_rook_for_castling method' do
+        expect(subject).to receive(:move_rook_for_castling)
+        subject.update_board(board, white_king, [0, 4], [0, 6], nil)
       end
     end
   end
@@ -227,7 +245,7 @@ describe Game do
         allow(e_spot).to receive(:piece=)
       end
       it 'does not call the defeat_piece method' do
-        subject.move_piece(board, king, [1, 1], [2, 2])
+        subject.move_piece(board, white_king, [1, 1], [2, 2])
         expect(subject).not_to receive(:defeat_piece)
       end
     end
@@ -248,11 +266,11 @@ describe Game do
       end
       it 'calls the defeat_piece method' do
         expect(subject).to receive(:defeat_piece)
-        subject.move_piece(board, king, [1, 1], [2, 2])
+        subject.move_piece(board, white_king, [1, 1], [2, 2])
       end
       it 'sets start spot as nil' do
         expect(k_spot).to receive(:piece=).with(nil)
-        subject.move_piece(board, king, [1, 1], [2, 2])
+        subject.move_piece(board, white_king, [1, 1], [2, 2])
       end
     end
   end
@@ -273,7 +291,7 @@ describe Game do
   describe 'own_piece?' do
     context 'piece in target spot matches player color' do
       before do
-        allow(board).to receive(:get_piece).and_return(king)
+        allow(board).to receive(:get_piece).and_return(white_king)
       end
       it 'returns true' do
         expect(subject.own_piece?(player1, k_spot)).to be true
@@ -313,16 +331,16 @@ describe Game do
         expect(subject.eligible_for_promotion?(black_pawn, [0, 4])).to be true
       end
     end
-    context 'it is a white pawn opposite its start side of the board (top)' do 
+    context 'it is a white pawn opposite its start side of the board (top)' do
       it 'returns true' do
         expect(subject.eligible_for_promotion?(white_pawn, [7, 2])).to be true
       end
     end
   end
 
-  describe '.puts king in check' do 
-    context 'after the test board is updated, there are no legal moves to put the king in check' do 
-      before do 
+  describe '.puts king in check' do
+    context 'after the test board is updated, there are no legal moves to put the king in check' do
+      before do
         allow(board).to receive(:active_opponent_spots).and_return([p_spot_w])
         allow(p_spot_w).to receive(:x).and_return(7)
         allow(p_spot_w).to receive(:y).and_return(2)
@@ -332,10 +350,10 @@ describe Game do
       end
     end
     context 'after the test board is updated, there is a legal move to put the king in check' do
-      before do 
+      before do
         allow(board).to receive(:active_opponent_spots).and_return([p_spot_w, q_spot, p_spot_b, k_spot])
         allow(p_spot_w).to receive(:x).and_return(4)
-        allow(p_spot_w).to receive(:y).and_return(2)        
+        allow(p_spot_w).to receive(:y).and_return(2) 
         allow(q_spot).to receive(:x).and_return(7)
         allow(q_spot).to receive(:y).and_return(4)
         allow(p_spot_b).to receive(:x).and_return(5)
@@ -353,7 +371,7 @@ describe Game do
   end
 
   describe '.clone board' do
-    before do 
+    before do
       allow(board).to receive(:active_opponent_spots).and_return([p_spot_w])
       allow(p_spot_w).to receive(:x).and_return(7)
       allow(p_spot_w).to receive(:y).and_return(2)
@@ -361,7 +379,7 @@ describe Game do
     it 'returns a new board' do
       expect(subject.clone_board).to be_instance_of(Board)
     end
-    it  'includes pieces in the same spots as the cloned board' do
+    it 'includes pieces in the same spots as the cloned board' do
       test_board = subject.clone_board
       test_board.get_piece([7, 2])
       expect(test_board.get_piece([7, 2])).to be_instance_of(Pawn)
@@ -369,8 +387,31 @@ describe Game do
   end
 
   describe '.move_rook_for_castling' do
-    context '..' do 
-      xit '' do
+    before do
+      allow(board).to receive(:grid).and_return([[e_spot, e_spot, e_spot, e_spot, k_spot_b, e_spot, e_spot, r_spot_b],
+                                                 [e_spot, k_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                 [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                 [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                 [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                 [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                 [e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot, e_spot],
+                                                 [r_spot_w, e_spot, e_spot, e_spot, k_spot, e_spot, e_spot, e_spot]])
+      allow(e_spot).to receive(:piece=)
+    end
+    context 'moves a white rook on the left side' do
+      it 'calls for the rook to be moved to the left of the king' do
+        allow(white_king).to receive(:rook_spot_for_castling).and_return([0, 0])
+        allow(board).to receive(:get_piece).and_return(white_rook, nil)
+        expect(subject).to receive(:move_piece).with(board, white_rook, [0, 0], [0, 3])
+        subject.move_rook_for_castling(board, white_king, [0, 4], [0, 2])
+      end
+    end
+    context 'moves a black rook on the right side' do
+      it 'calls for the rook to be moved to the right of the king' do
+        allow(black_king).to receive(:rook_spot_for_castling).and_return([7, 7])
+        allow(board).to receive(:get_piece).and_return(black_rook, nil)
+        expect(subject).to receive(:move_piece).with(board, black_rook, [7, 7], [7, 5])
+        subject.move_rook_for_castling(board, black_king, [7, 4], [7, 6])
       end
     end
   end
