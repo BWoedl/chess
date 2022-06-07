@@ -14,7 +14,6 @@ class Knight < Piece
   end
 
   def legal_move?(board, start_spot, end_spot)
-    return false if board.occupied_by_same_color?(self, end_spot)
     return true if MOVES.include?([end_spot[0] - start_spot[0], end_spot[1] - start_spot[1]])
 
     false

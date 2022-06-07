@@ -14,7 +14,6 @@ class King < Piece
   def legal_move?(board, start_spot, end_spot)
     row_move = start_spot[0] - end_spot[0]
     col_move = start_spot[1] - end_spot[1]
-    return false if board.occupied_by_same_color?(self, end_spot)
     return true if castling_move?(board, start_spot, end_spot)
     return true if row_move.abs <= 1 && col_move.abs <= 1
 

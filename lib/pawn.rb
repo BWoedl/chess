@@ -13,7 +13,6 @@ class Pawn < Piece
 
   def legal_move?(board, start_spot, end_spot)
     allowed_row_move = color == 'white' ? 1 : -1
-    return false if board.occupied_by_same_color?(self, end_spot)
     return true if en_passant?(board, start_spot, end_spot)
     return true if capture?(board, start_spot, end_spot)
     return legal_first_move?(board, start_spot, end_spot) if move == 1

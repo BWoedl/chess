@@ -378,4 +378,25 @@ describe Board do
       end
     end
   end
+
+  describe '.valid_move?' do
+    context 'checks if a player tries remain in the same space' do
+      before do
+        allow(subject).to receive(:active_opponent_spots).and_return([p_spot_w])
+        allow(p_spot_w).to receive(:x).and_return(2)
+        allow(p_spot_w).to receive(:y).and_return(3)
+        allow(subject).to receive(:puts_king_in_check?).and_return(false)
+      end
+      it 'returns true if spots are different' do
+        allow(white_king).to receive(:legal_move?).with(board, [2, 3], [2, 5]).and_return(true)
+        expect(subject.valid_move?(white_king, [2, 3], [2, 5])).to be true
+      end
+      it 'returns false if spots are the same' do
+        allow(white_king).to receive(:legal_move?).with(board, [3, 4], [3, 4]).and_return(true)
+        expect(subject.valid_move?(white_king, [3, 4], [3, 4])). to be false
+      end
+      xit 'does additional checks?' do
+      end
+    end
+  end
 end

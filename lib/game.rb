@@ -27,7 +27,7 @@ class Game
     start_spot = convert_input(piece_to_move)
     end_spot = convert_input(spot_to_move)
     piece = @board.get_piece(start_spot)
-    if valid_turn?(piece, start_spot, end_spot)
+    if board.valid_move?(piece, start_spot, end_spot)
       @board.update(piece, start_spot, end_spot, nil)
       promote(piece, piece_to_swap, end_spot) if piece.instance_of?(Pawn) && eligible_for_promotion?(piece, end_spot)
       @turn += 1
@@ -74,14 +74,6 @@ class Game
   def own_piece?(player, start_spot)
     return false if @board.get_piece(start_spot).nil?
     return true if player.color == @board.get_piece(start_spot).color
-
-    false
-  end
-
-  def valid_turn?(piece, start_spot, end_spot)
-    if piece.legal_move?(@board, start_spot, end_spot) && start_spot != end_spot && !board.puts_king_in_check?(start_spot, end_spot)
-      return true
-    end
 
     false
   end

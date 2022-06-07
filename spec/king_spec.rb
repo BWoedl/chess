@@ -34,13 +34,6 @@ describe King do
         expect(subject.legal_move?(board, [4, 3], [5, 4])).to be(true)
       end
     end
-    context 'cannot move into a space occupied by same color' do
-      it 'returns false' do
-        allow(board).to receive(:get_piece).and_return(rook)
-        allow(board).to receive(:occupied_by_same_color?).and_return(true)
-        expect(subject.legal_move?(board, [4, 3], [4, 4])).to be(false)
-      end
-    end
     context 'is a valid castling move' do
       it 'returns true' do
         allow(board).to receive(:get_piece).and_return(rook, nil)

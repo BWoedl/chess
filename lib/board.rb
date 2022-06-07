@@ -75,13 +75,14 @@ class Board
     puts line
   end
 
-  # def valid_move?(piece, start_spot, end_spot)
-    # return false if occupied_by_same_color?(piece, end_spot)
-    # return false if start_spot == end_spot
-    # return false if piece.legal_move?(start_spot, end_spot)
-    # return false if puts_king_in_check(start_spot, end_spot)
+  def valid_move?(piece, start_spot, end_spot)
+    return false if occupied_by_same_color?(piece, end_spot)
+    return false if start_spot == end_spot
+    return false unless piece.legal_move?(self, start_spot, end_spot)
+    return false if puts_king_in_check?(start_spot, end_spot)
 
-  # end
+    true
+  end
 
   def occupied_by_same_color?(piece, end_spot)
     target_spot_piece = get_piece(end_spot)
@@ -122,7 +123,6 @@ class Board
     move_piece(rook, [rook_spot[0], rook_spot[1]], [rook_spot[0], rook_end_y_spot])
   end
 
-# need to make this not mark the rook as defeated in a castling move
   def move_piece(piece, start_spot, end_spot, passant_spot = nil)
     target_spot_piece = passant_spot ? get_piece(passant_spot) : get_piece(end_spot)
     defeat_piece(target_spot_piece, passant_spot) unless target_spot_piece.nil?

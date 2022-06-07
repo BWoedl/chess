@@ -38,13 +38,6 @@ describe Knight do
         expect(subject.legal_move?(board, [4, 3], [4, 4])).to be(false)
       end
     end
-    context 'tries to move to a spot with another white piece' do
-      it 'returns false' do
-        allow(board).to receive(:get_piece).and_return(queen)
-        allow(board).to receive(:occupied_by_same_color?).and_return(true)
-        expect(subject.legal_move?(board, [2, 1], [1, 3])).to be(false)
-      end
-    end
     context 'is allowed to move to a spot with a black piece' do
       it 'returns true' do
         allow(board).to receive(:get_piece).and_return(rook)

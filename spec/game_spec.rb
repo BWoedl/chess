@@ -74,25 +74,6 @@ describe Game do
     end
   end
 
-  describe '.valid_turn?' do
-    context 'checks if a player tries remain in the same space' do
-      before do
-        allow(board).to receive(:active_opponent_spots).and_return([p_spot_w])
-        allow(p_spot_w).to receive(:x).and_return(2)
-        allow(p_spot_w).to receive(:y).and_return(3)
-        allow(board).to receive(:puts_king_in_check?).and_return(false)
-      end
-      it 'returns true if spots are different' do
-        allow(white_king).to receive(:legal_move?).with(board, [2, 3], [2, 5]).and_return(true)
-        expect(subject.valid_turn?(white_king, [2, 3], [2, 5])).to be true
-      end
-      it 'returns false if spots are the same' do
-        allow(white_king).to receive(:legal_move?).with(board, [3, 4], [3, 4]).and_return(true)
-        expect(subject.valid_turn?(white_king, [3, 4], [3, 4])). to be false
-      end
-    end
-  end
-
   describe '.spot_to_move' do
     it 'returns an array with row and column number' do
       allow(subject).to receive(:puts)
@@ -147,8 +128,7 @@ describe Game do
         allow(subject).to receive(:gets).and_return('c8', 'e8')
         allow(board).to receive(:grid)
         allow(board).to receive(:get_piece).and_return(white_king, white_king)
-        allow(white_king).to receive(:valid_turn?).and_return(false)
-        allow(white_king).to receive(:legal_move?).and_return(false)
+        allow(board).to receive(:valid_move?).and_return(false)
         allow(subject).to receive(:puts)
       end
       it 'does not update the board' do
@@ -161,7 +141,7 @@ describe Game do
         allow(subject).to receive(:gets).and_return('c8', 'd8')
         allow(board).to receive(:grid)
         allow(board).to receive(:get_piece).and_return(white_king, white_king)
-        allow(white_king).to receive(:valid_turn?).and_return(true)
+        allow(board).to receive(:valid_move?).and_return(true)
         allow(white_king).to receive(:legal_move?).and_return(true)
         allow(subject).to receive(:puts)
         subject.instance_variable_set(:@turn, 1)
