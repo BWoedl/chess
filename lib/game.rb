@@ -102,10 +102,25 @@ class Game
   end
 
   def game_over?
-    false
+    check_mate?('white') || check_mate?('black') || stalemate?
+  end
+
+  def check_mate?(color)
+    @board.no_possible_moves?(color) && @board.check?(color)
+  end
+
+  def stalemate?
+    @board.no_possible_moves?('white') && @board.no_possible_moves?('black') && !@board.check?('white') && !@board.check?('black')
   end
 
   def game_end
     puts Messages::GAME_END
+    if stalemate?
+      puts Messages::STALEMATE
+    elsif check_mate?('white')
+      puts "\n#{@player1.name}, " + Messages::CHECK_MATE
+    elsif check_mate?('black')
+      puts "\n#{@player2.name}, " + Messages::CHECK_MATE
+    end
   end
 end

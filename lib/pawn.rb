@@ -1,6 +1,8 @@
 class Pawn < Piece
   attr_accessor :symbol, :move
 
+  MOVES = [[1, 0], [-1, 0], [2, 0], [-2, 0], [1, 1], [-1, 1], [1, -1], [-1, -1]]
+
   def initialize(color, move = 1)
     super(color)
     @symbol = set_symbol
@@ -49,5 +51,16 @@ class Pawn < Piece
   def en_passant_spot(start_spot, end_spot)
     direction = start_spot[1] > end_spot[1] ? -1 : 1
     [start_spot[0], start_spot[1] + direction]
+  end
+
+  def generate_possible_moves(board, start_spot)
+    possibilities = []
+    MOVES.each do |move|
+      end_spot = [(start_spot[0] - move[0]), (start_spot[1] - move[1])]
+      if end_spot[0].between?(0, 7) && end_spot[1].between?(0, 7) && board.valid_move?(self, start_spot, end_spot)
+        possibilities << move
+      end
+    end
+    possibilities
   end
 end

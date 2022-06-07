@@ -134,9 +134,7 @@ class Board
   end
 
   def passant?(piece, start_spot, end_spot)
-    if piece.instance_of?(Pawn) && piece.en_passant?(self, start_spot, end_spot)
-      return true
-    end
+    return true if piece.instance_of?(Pawn) && piece.en_passant?(self, start_spot, end_spot)
 
     false
   end
@@ -146,6 +144,16 @@ class Board
     @grid.each do |row|
       row.each do |spot|
         spots << spot unless spot.piece.nil? || spot.piece.color == color
+      end
+    end
+    spots
+  end
+
+  def active_team_spots(color)
+    spots = []
+    @grid.each do |row|
+      row.each do |spot|
+        spots << spot unless spot.piece.nil? || spot.piece.color != color
       end
     end
     spots
@@ -175,5 +183,14 @@ class Board
     return true unless target_spot_piece.nil?
 
     false
+  end
+
+  def no_possible_moves?(color)
+    spots = active_team_spots(color)
+    spots.each do |spot|
+      possibilities = spot.piece.generate_possible_moves(self, [spot.x, spot.y])
+      return false if possibilities.size.positive?
+    end
+    true
   end
 end

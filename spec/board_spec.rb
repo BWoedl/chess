@@ -395,8 +395,6 @@ describe Board do
         allow(white_king).to receive(:legal_move?).with(board, [3, 4], [3, 4]).and_return(true)
         expect(subject.valid_move?(white_king, [3, 4], [3, 4])). to be false
       end
-      xit 'does additional checks?' do
-      end
     end
   end
 
@@ -411,6 +409,17 @@ describe Board do
       it 'returns false' do
         allow(subject).to receive(:get_piece).and_return(nil)
         expect(subject.occupied?([5, 3])).to be false
+      end
+    end
+  end
+
+  describe '.no_possible_moves' do
+    context '' do
+      xit 'returns false' do
+      end
+    end
+    context '' do
+      xit 'returns true' do
       end
     end
   end

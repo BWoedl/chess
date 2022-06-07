@@ -22,7 +22,8 @@ class Knight < Piece
   def generate_possible_moves(board, start_spot)
     possibilities = []
     MOVES.each do |move|
-      if (start_spot[0] - move[0]).between(0, 7) && (start_spot[1] - move[1]).between(0, 7) && legal_move?(board, start_spot, move)
+      end_spot = [(start_spot[0] - move[0]), (start_spot[1] - move[1])]
+      if end_spot[0].between?(0, 7) && end_spot[1].between?(0, 7) && board.valid_move?(self, start_spot, end_spot)
         possibilities << move
       end
     end

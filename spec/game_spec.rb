@@ -114,6 +114,7 @@ describe Game do
         allow(white_king).to receive(:legal_move?).with(0, 1).and_return(true)
         allow(subject).to receive(:puts)
         allow(board).to receive(:display)
+        allow(subject).to receive(:game_end)
       end
       it 'calls for another turn' do
         expect(subject).to receive(:take_turn).once
@@ -211,23 +212,81 @@ describe Game do
     end
   end
 
-  describe '.draw?' do
-    context 'it something' do
-      xit 'blah bee bah' do
+  describe '.stalemate?' do
+    context 'when white is in check and there are no legal moves' do
+      it 'returns false' do
+        allow(board).to receive(:check?).with('black').and_return false
+        allow(board).to receive(:check?).with('white').and_return true
+        allow(board).to receive(:no_possible_moves?).and_return true
+        expect(subject.stalemate?).to be false
+      end
+    end
+    context 'when black is in check and there are no legal moves' do
+      it 'returns false' do
+        allow(board).to receive(:check?).with('black').and_return true
+        allow(board).to receive(:check?).with('white').and_return false
+        allow(board).to receive(:no_possible_moves?).and_return true
+        expect(subject.stalemate?).to be false
+      end
+    end
+    context 'when no one is in check but there are legal moves' do
+      it 'returns false' do
+        allow(board).to receive(:check?).with('black').and_return false
+        allow(board).to receive(:check?).with('white').and_return false
+        allow(board).to receive(:no_possible_moves?).and_return false
+        expect(subject.stalemate?).to be false
+      end
+    end
+    context 'when no one is in check and there are no legal moves' do
+      it 'returns true' do
+        allow(board).to receive(:check?).with('black').and_return false
+        allow(board).to receive(:check?).with('white').and_return false
+        allow(board).to receive(:no_possible_moves?).and_return true
+        expect(subject.stalemate?).to be true
       end
     end
   end
 
-  describe '.won?' do
-    context 'it something' do
-      xit 'blah bee bah' do
+  describe '.check_mate?' do
+    context 'when there are no possible moves for black but black is not in check' do
+      it 'returns false' do
+        allow(board).to receive(:check?).with('black').and_return false
+        allow(board).to receive(:no_possible_moves?).and_return true
+        expect(subject.check_mate?('black')).to be false
+      end
+    end
+    context 'when there are no possible moves for white and white is in check' do
+      it 'returns true' do
+        allow(board).to receive(:check?).with('white').and_return true
+        allow(board).to receive(:no_possible_moves?).and_return true
+        expect(subject.check_mate?('white')).to be true
       end
     end
   end
 
   describe '.game_over?' do
-    context 'it something' do
-      xit 'blah bee bah' do
+    context 'when the game is not a checkmate for either side nor a stalemate' do
+      it 'returns false' do
+        allow(subject).to receive(:check_mate?).with('white').and_return false
+        allow(subject).to receive(:check_mate?).with('black').and_return false
+        allow(subject).to receive(:stalemate?).and_return false
+        expect(subject.game_over?).to be false
+      end
+    end
+    context 'when the game has reached a stalemate' do
+      it 'returns true' do
+        allow(subject).to receive(:check_mate?).with('white').and_return false
+        allow(subject).to receive(:check_mate?).with('black').and_return false
+        allow(subject).to receive(:stalemate?).and_return true
+        expect(subject.game_over?).to be true
+      end
+    end
+    context 'when white is in checkmate' do
+      it 'returns true' do
+        allow(subject).to receive(:check_mate?).with('white').and_return true
+        allow(subject).to receive(:check_mate?).with('black').and_return false
+        allow(subject).to receive(:stalemate?).and_return false
+        expect(subject.game_over?).to be true
       end
     end
   end
