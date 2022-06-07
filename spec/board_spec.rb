@@ -414,12 +414,26 @@ describe Board do
   end
 
   describe '.no_possible_moves' do
-    context '' do
-      xit 'returns false' do
+    context 'when there are no legal moves for any pieces' do
+      before do
+        allow(subject).to receive(:active_team_spots).and_return([p_spot_w])
+        allow(p_spot_w).to receive(:x)
+        allow(p_spot_w).to receive(:y)
+        allow(white_pawn).to receive(:generate_possible_moves).and_return([])
+      end
+      it 'returns true' do
+        expect(subject.no_possible_moves?('white')).to be true
       end
     end
-    context '' do
-      xit 'returns true' do
+    context 'when there is at least one legal move for a piece' do
+      before do
+        allow(subject).to receive(:active_team_spots).and_return([p_spot_w])
+        allow(p_spot_w).to receive(:x)
+        allow(p_spot_w).to receive(:y)
+        allow(white_pawn).to receive(:generate_possible_moves).and_return([1, 4])
+      end
+      it 'returns false' do
+        expect(subject.no_possible_moves?('white')).to be false
       end
     end
   end
