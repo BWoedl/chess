@@ -281,7 +281,6 @@ describe Board do
     context 'when it is a castling move' do
       before do
         allow(white_king).to receive(:move=)
-        allow(subject).to receive(:get_piece).and_return(white_rook, nil)
         allow(white_king).to receive(:instance_of?).and_return(false, true)
         allow(white_king).to receive(:castling_move?).and_return(true)
       end
