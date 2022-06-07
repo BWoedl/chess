@@ -14,6 +14,7 @@ describe Pawn do
       it 'returns true' do
         allow(board).to receive(:get_piece).and_return(nil)
         allow(board).to receive(:occupied_by_same_color?).and_return(false)
+        allow(board).to receive(:occupied?).and_return(false)
         expect(black_pawn.legal_move?(board, [4, 3], [3, 3])).to be(true)
       end
     end
@@ -22,6 +23,7 @@ describe Pawn do
         black_pawn.instance_variable_set(:@move, 1)
         allow(board).to receive(:get_piece).and_return(nil)
         allow(board).to receive(:occupied_by_same_color?).and_return(false)
+        allow(board).to receive(:occupied?).and_return(false)
         expect(black_pawn.legal_move?(board, [6, 3], [4, 3])).to be(true)
       end
     end
@@ -30,13 +32,14 @@ describe Pawn do
         black_pawn.instance_variable_set(:@move, 2)
         allow(board).to receive(:get_piece).and_return(nil)
         allow(board).to receive(:occupied_by_same_color?).and_return(false)
+        allow(board).to receive(:occupied?).and_return(false)
         expect(black_pawn.legal_move?(board, [6, 3], [4, 3])).to be(false)
       end
     end
     context 'cannot move foward if spot is occupied' do
       it 'returns false' do
-        allow(board).to receive(:get_piece).and_return(king)
-        allow(board).to receive(:occupied_by_same_color?).and_return(true)
+        allow(board).to receive(:get_piece).and_return(black_pawn)
+        allow(board).to receive(:occupied?).and_return(true)
         expect(black_pawn.legal_move?(board, [6, 3], [5, 3])).to be(false)
       end
     end
@@ -44,6 +47,7 @@ describe Pawn do
       it 'returns false' do
         allow(board).to receive(:get_piece).and_return(nil)
         allow(board).to receive(:occupied_by_same_color?).and_return(false)
+        allow(board).to receive(:occupied?).and_return(false)
         expect(black_pawn.legal_move?(board, [5, 4], [4, 3])).to be(false)
       end
     end
@@ -51,6 +55,7 @@ describe Pawn do
       it 'returns true' do
         allow(board).to receive(:get_piece).and_return(white_pawn)
         allow(board).to receive(:occupied_by_same_color?).and_return(false)
+        allow(board).to receive(:occupied?).and_return(true)
         expect(black_pawn.legal_move?(board, [5, 4], [4, 3])).to be(true)
       end
     end
@@ -58,6 +63,7 @@ describe Pawn do
       it 'returns false' do
         allow(board).to receive(:get_piece).and_return(white_pawn)
         allow(board).to receive(:occupied_by_same_color?).and_return(false)
+        allow(board).to receive(:occupied?).and_return(false)
         expect(black_pawn.legal_move?(board, [6, 5], [4, 3])).to be(false)
       end
     end
@@ -65,6 +71,7 @@ describe Pawn do
       it 'returns false' do
         allow(board).to receive(:get_piece).and_return(nil)
         allow(board).to receive(:occupied_by_same_color?).and_return(false)
+        allow(board).to receive(:occupied?).and_return(false)
         expect(black_pawn.legal_move?(board, [2, 3], [3, 3])).to be(false)
       end
     end
@@ -75,6 +82,7 @@ describe Pawn do
         allow(board).to receive(:get_piece).with([4, 3]).and_return(white_pawn)
         allow(board).to receive(:last_piece_moved).and_return(white_pawn)
         allow(board).to receive(:occupied_by_same_color?).and_return(false)
+        allow(board).to receive(:occupied?).and_return(false)
         expect(black_pawn.legal_move?(board, [4, 4], [3, 3])).to be(true)
       end
     end
@@ -84,6 +92,7 @@ describe Pawn do
       it 'returns false' do
         allow(board).to receive(:get_piece).and_return(nil)
         allow(board).to receive(:occupied_by_same_color?).and_return(false)
+        allow(board).to receive(:occupied?).and_return(false)
         expect(white_pawn.legal_move?(board, [2, 4], [1, 4])).to be(false)
       end
     end
@@ -91,6 +100,7 @@ describe Pawn do
       it 'returns true' do
         allow(board).to receive(:get_piece).and_return(nil)
         allow(board).to receive(:occupied_by_same_color?).and_return(false)
+        allow(board).to receive(:occupied?).and_return(false)
         expect(white_pawn.legal_move?(board, [2, 3], [3, 3])).to be(true)
       end
     end
@@ -101,6 +111,7 @@ describe Pawn do
         allow(board).to receive(:get_piece).with([4, 5]).and_return(black_pawn)
         allow(board).to receive(:last_piece_moved).and_return(black_pawn)
         allow(board).to receive(:occupied_by_same_color?).and_return(false)
+        allow(board).to receive(:occupied?).and_return(false)
         expect(white_pawn.legal_move?(board, [4, 4], [5, 5])).to be(true)
       end
     end
@@ -108,28 +119,33 @@ describe Pawn do
   describe '.en_passant?' do
     it 'returns false if there is no piece to pass' do
       allow(board).to receive(:get_piece).and_return(nil)
+      allow(board).to receive(:occupied?).and_return(false)
       expect(white_pawn.en_passant?(board, [4, 4], [5, 3])).to be false
     end
     it 'returns false if the piece to pass is not a pawn' do
       allow(board).to receive(:get_piece).and_return(king)
+      allow(board).to receive(:occupied?).and_return(false)
       expect(white_pawn.en_passant?(board, [4, 4], [5, 3])).to be false
     end
     it 'returns false if the piece to pass is a pawn that has not just made its first move 2 spaces' do
       black_pawn.instance_variable_set(:@move, 3)
       allow(board).to receive(:get_piece).and_return(black_pawn)
+      allow(board).to receive(:occupied?).and_return(false)
       expect(white_pawn.en_passant?(board, [4, 4], [5, 3])).to be false
     end
-    it 'returns false if the piece to pass is a pawn that just made its first move 2 spaces but was not the last move on the board' do
+    it 'returns false if the piece to pass is a pawn that just made its first move 2 spaces but was not the last move' do
       black_pawn.instance_variable_set(:@move, 2)
       allow(board).to receive(:last_piece_moved).and_return(king)
       allow(board).to receive(:get_piece).with([4, 3]).and_return(black_pawn)
+      allow(board).to receive(:occupied?).and_return(false)
       expect(white_pawn.en_passant?(board, [4, 4], [5, 3])).to be false
     end
-    it 'returns true if the piece to pass is a pawn that just made its first move 2 spaces and was just the last move' do
+    it 'returns true if the piece to pass is a pawn that just made its first move 2 spaces and was the last move' do
       black_pawn.instance_variable_set(:@move, 2)
       allow(board).to receive(:get_piece).with([4, 3]).and_return(black_pawn)
       allow(board).to receive(:get_piece).with([5, 3]).and_return(nil)
       allow(board).to receive(:last_piece_moved).and_return(black_pawn)
+      allow(board).to receive(:occupied?).and_return(false)
       expect(white_pawn.en_passant?(board, [4, 4], [5, 3])).to be true
     end
   end
@@ -141,21 +157,6 @@ describe Pawn do
     it 'returns the spot that has been passed to the left' do
       spot = [4, 5]
       expect(white_pawn.en_passant_spot([4, 4], [5,5])).to eq(spot)
-    end
-  end
-
-  describe '.occupied?' do
-    context 'if forward spot is filled with piece' do
-      it 'returns true' do
-        allow(board).to receive(:get_piece).and_return(black_pawn)
-        expect(white_pawn.occupied?(board, [5, 3])).to be true
-      end
-    end
-    context 'if forward spot is empty' do
-      it 'returns false' do
-        allow(board).to receive(:get_piece).and_return(nil)
-        expect(white_pawn.occupied?(board, [5, 3])).to be false
-      end
     end
   end
 end

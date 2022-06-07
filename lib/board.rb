@@ -107,11 +107,9 @@ class Board
   end
 
   def update(piece, start_spot, end_spot, passant_spot = nil)
-    unless passant?(piece, start_spot, end_spot).nil?
-      passant_spot = piece.en_passant_spot(start_spot, end_spot)
-    end
+    passant_spot = passant?(piece, start_spot, end_spot) ? piece.en_passant_spot(start_spot, end_spot) : nil
     if piece.instance_of?(King) && piece.castling_move?(self, start_spot, end_spot)
-      move_rook_for_castling(piece, start_spot, end_spot) 
+      move_rook_for_castling(piece, start_spot, end_spot)
     end
     move_piece(piece, start_spot, end_spot, passant_spot)
   end
@@ -135,13 +133,12 @@ class Board
     @grid[passant_spot[0]][passant_spot[1]].piece = nil if passant_spot
   end
 
-# refactor to be true / false
   def passant?(piece, start_spot, end_spot)
     if piece.instance_of?(Pawn) && piece.en_passant?(self, start_spot, end_spot)
-      return piece.en_passant_spot(start_spot, end_spot)
+      return true
     end
 
-    nil
+    false
   end
 
   def active_opponent_spots(color)
@@ -171,5 +168,12 @@ class Board
       end
     end
     nil
+  end
+
+  def occupied?(end_spot)
+    target_spot_piece = get_piece(end_spot)
+    return true unless target_spot_piece.nil?
+
+    false
   end
 end

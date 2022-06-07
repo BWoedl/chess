@@ -399,4 +399,19 @@ describe Board do
       end
     end
   end
+
+  describe '.occupied?' do
+    context 'if forward spot is filled with piece' do
+      it 'returns true' do
+        allow(subject).to receive(:get_piece).and_return(black_pawn)
+        expect(subject.occupied?([5, 3])).to be true
+      end
+    end
+    context 'if forward spot is empty' do
+      it 'returns false' do
+        allow(subject).to receive(:get_piece).and_return(nil)
+        expect(subject.occupied?([5, 3])).to be false
+      end
+    end
+  end
 end
