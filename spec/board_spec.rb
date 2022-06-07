@@ -190,4 +190,18 @@ describe Board do
       end
     end
   end
+  describe '.occupied_by_same_color?' do
+    context 'when target space is occupied by the same color piece' do
+      it 'returns true' do
+        allow(subject).to receive(:get_piece).with([1, 1]).and_return(white_rook)
+        expect(subject.occupied_by_same_color?(white_queen, [1, 1])).to be true
+      end
+    end
+    context 'when target space is occupied by a piece of the opposite color' do
+      it 'returns false' do
+        allow(subject).to receive(:get_piece).with([2, 2]).and_return(black_rook)
+        expect(subject.occupied_by_same_color?(white_queen, [2, 2])).to be false
+      end
+    end
+  end
 end

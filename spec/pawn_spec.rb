@@ -13,6 +13,7 @@ describe Pawn do
     context 'moves one space down the board' do
       it 'returns true' do
         allow(board).to receive(:get_piece).and_return(nil)
+        allow(board).to receive(:occupied_by_same_color?).and_return(false)
         expect(black_pawn.legal_move?(board, [4, 3], [3, 3])).to be(true)
       end
     end
@@ -20,6 +21,7 @@ describe Pawn do
       it 'returns true' do
         black_pawn.instance_variable_set(:@move, 1)
         allow(board).to receive(:get_piece).and_return(nil)
+        allow(board).to receive(:occupied_by_same_color?).and_return(false)
         expect(black_pawn.legal_move?(board, [6, 3], [4, 3])).to be(true)
       end
     end
@@ -27,36 +29,42 @@ describe Pawn do
       it 'returns false' do
         black_pawn.instance_variable_set(:@move, 2)
         allow(board).to receive(:get_piece).and_return(nil)
+        allow(board).to receive(:occupied_by_same_color?).and_return(false)
         expect(black_pawn.legal_move?(board, [6, 3], [4, 3])).to be(false)
       end
     end
     context 'cannot move foward if spot is occupied' do
       it 'returns false' do
         allow(board).to receive(:get_piece).and_return(king)
+        allow(board).to receive(:occupied_by_same_color?).and_return(true)
         expect(black_pawn.legal_move?(board, [6, 3], [5, 3])).to be(false)
       end
     end
     context 'moves diagonally when no piece in the target spot' do
       it 'returns false' do
         allow(board).to receive(:get_piece).and_return(nil)
+        allow(board).to receive(:occupied_by_same_color?).and_return(false)
         expect(black_pawn.legal_move?(board, [5, 4], [4, 3])).to be(false)
       end
     end
     context 'moves diagonally when a piece in the target spot' do
       it 'returns true' do
         allow(board).to receive(:get_piece).and_return(white_pawn)
+        allow(board).to receive(:occupied_by_same_color?).and_return(false)
         expect(black_pawn.legal_move?(board, [5, 4], [4, 3])).to be(true)
       end
     end
     context 'moves diagonally more than one row' do
       it 'returns false' do
         allow(board).to receive(:get_piece).and_return(white_pawn)
+        allow(board).to receive(:occupied_by_same_color?).and_return(false)
         expect(black_pawn.legal_move?(board, [6, 5], [4, 3])).to be(false)
       end
     end
     context 'moves backward' do
       it 'returns false' do
         allow(board).to receive(:get_piece).and_return(nil)
+        allow(board).to receive(:occupied_by_same_color?).and_return(false)
         expect(black_pawn.legal_move?(board, [2, 3], [3, 3])).to be(false)
       end
     end
@@ -66,6 +74,7 @@ describe Pawn do
         allow(board).to receive(:get_piece).with([3, 3]).and_return(nil)
         allow(board).to receive(:get_piece).with([4, 3]).and_return(white_pawn)
         allow(board).to receive(:last_piece_moved).and_return(white_pawn)
+        allow(board).to receive(:occupied_by_same_color?).and_return(false)
         expect(black_pawn.legal_move?(board, [4, 4], [3, 3])).to be(true)
       end
     end
@@ -74,12 +83,14 @@ describe Pawn do
     context 'moves down the board' do
       it 'returns false' do
         allow(board).to receive(:get_piece).and_return(nil)
+        allow(board).to receive(:occupied_by_same_color?).and_return(false)
         expect(white_pawn.legal_move?(board, [2, 4], [1, 4])).to be(false)
       end
     end
     context 'moves up the board' do
       it 'returns true' do
         allow(board).to receive(:get_piece).and_return(nil)
+        allow(board).to receive(:occupied_by_same_color?).and_return(false)
         expect(white_pawn.legal_move?(board, [2, 3], [3, 3])).to be(true)
       end
     end
@@ -89,6 +100,7 @@ describe Pawn do
         allow(board).to receive(:get_piece).with([5, 5]).and_return(nil)
         allow(board).to receive(:get_piece).with([4, 5]).and_return(black_pawn)
         allow(board).to receive(:last_piece_moved).and_return(black_pawn)
+        allow(board).to receive(:occupied_by_same_color?).and_return(false)
         expect(white_pawn.legal_move?(board, [4, 4], [5, 5])).to be(true)
       end
     end

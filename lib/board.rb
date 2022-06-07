@@ -75,6 +75,17 @@ class Board
     puts line
   end
 
+  # def valid_move?
+
+  # end
+
+  def occupied_by_same_color?(piece, end_spot)
+    target_spot_piece = get_piece(end_spot)
+    return true if !target_spot_piece.nil? && target_spot_piece.color == piece.color
+
+    false
+  end
+
   def active_opponent_spots(color)
     spots = []
     @grid.each do |row|
