@@ -1,12 +1,14 @@
 class King < Piece
   attr_accessor :symbol, :move
 
-  MOVES = [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [-1, 1], [1, -1], [-1, -1]]
-
   def initialize(color, move = 1)
     super(color)
     @symbol = set_symbol
     @move = move
+  end
+
+  def moves
+    [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [-1, 1], [1, -1], [-1, -1]]
   end
 
   def set_symbol
@@ -40,16 +42,5 @@ class King < Piece
   def rook_spot_for_castling(start_spot, end_spot)
     rook_side = end_spot[1] == 2 ? 0 : 7
     [start_spot[0], rook_side]
-  end
-
-  def generate_possible_moves(board, start_spot)
-    possibilities = []
-    MOVES.each do |move|
-      end_spot = [(start_spot[0] - move[0]), (start_spot[1] - move[1])]
-      if end_spot[0].between?(0, 7) && end_spot[1].between?(0, 7) && board.valid_move?(self, start_spot, end_spot)
-        possibilities << move
-      end
-    end
-    possibilities
   end
 end

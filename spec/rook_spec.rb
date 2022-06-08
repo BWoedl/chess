@@ -4,7 +4,7 @@ require 'piece'
 require 'rook'
 
 describe Rook do
-  subject(:Rook) { Rook.new('white') }
+  subject(:rook) { described_class.new('white') }
   let(:board) { double('board') }
 
   describe '.legal_move' do

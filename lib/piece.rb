@@ -51,4 +51,20 @@ class Piece
     col_operator = 0 if start_spot[1] == end_spot[1]
     [row_operator, col_operator]
   end
+
+  def generate_possible_moves(board, start_spot)
+    operators = []
+    possibilities = []
+    moves.each do |move|
+      operators[0] = move[0]
+      operators[1] = move[1]
+      while (start_spot[0] - operators[0]).between?(0, 7) && (start_spot[1] - operators[1]).between?(0, 7) && board.valid_move?(self, start_spot, [(start_spot[0] - operators[0]), (start_spot[1] - operators[1])])
+        end_spot = [(start_spot[0] - operators[0]), (start_spot[1] - operators[1])]
+        possibilities << end_spot unless possibilities.include?(end_spot)
+        operators[0] += move[0]
+        operators[1] += move[1]
+      end
+    end
+    possibilities
+  end
 end

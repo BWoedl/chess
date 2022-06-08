@@ -15,16 +15,16 @@ describe Board do
   let(:black_rook) { double('rook', class: Rook, color: 'black') }
   let(:black_king) { double('king', class: King, color: 'black') }
   let(:spot) { double('spot', piece: nil) }
-  let(:k_spot_b) { double('spot1', piece: black_king) }
-  let(:r_spot_b) { double('spot2', piece: black_rook) }
-  let(:k_spot_w) { double('spot3', piece: white_king) }
-  let(:r_spot_w) { double('spot4', piece: white_rook) }
-  let(:q_spot_w) { double('spot5', piece: white_queen) }
-  let(:n_spot_w) { double('spot6', piece: white_knight) }
-  let(:b_spot_w) { double('spot7', piece: white_bishop) }
-  let(:p_spot_w) { double('spot8', piece: white_pawn) }
-  let(:p_spot_b) { double('spot9', piece: black_pawn) }
-  let(:e_spot) { double('spot0') }
+  let(:k_spot_b) { double('spot', piece: black_king) }
+  let(:r_spot_b) { double('spot', piece: black_rook) }
+  let(:k_spot_w) { double('spot', piece: white_king) }
+  let(:r_spot_w) { double('spot', piece: white_rook) }
+  let(:q_spot_w) { double('spot', piece: white_queen) }
+  let(:n_spot_w) { double('spot', piece: white_knight) }
+  let(:b_spot_w) { double('spot', piece: white_bishop) }
+  let(:p_spot_w) { double('spot', piece: white_pawn) }
+  let(:p_spot_b) { double('spot', piece: black_pawn) }
+  let(:e_spot) { double('spot') }
 
   describe '.create_board' do
     context 'resets the board to an empty 8x8 grid' do
