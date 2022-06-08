@@ -159,4 +159,30 @@ describe Pawn do
       expect(white_pawn.en_passant_spot([4, 4], [5,5])).to eq(spot)
     end
   end
+  describe '.generate_possible_moves' do
+    context 'when there are no possible moves' do
+      before do
+        allow(board).to receive(:valid_move?).with(white_pawn, [1, 0], [0, 0]).and_return(false)
+        allow(board).to receive(:valid_move?).with(white_pawn, [1, 0], [0, 1]).and_return(false)
+        allow(board).to receive(:valid_move?).with(white_pawn, [1, 0], [2, 1]).and_return(false)
+        allow(board).to receive(:valid_move?).with(white_pawn, [1, 0], [2, 0]).and_return(false)
+      end
+      it 'returns an empty array' do
+        expect(white_pawn.generate_possible_moves(board, [1, 0])).to eq([])
+      end
+    end
+    context 'when there are limited moves based on other pieces blocking' do
+      before do
+        allow(board).to receive(:valid_move?).with(white_pawn, [1, 0], [0, 0]).and_return(false)
+        allow(board).to receive(:valid_move?).with(white_pawn, [1, 0], [0, 1]).and_return(false)
+        allow(board).to receive(:valid_move?).with(white_pawn, [1, 0], [2, 1]).and_return(false)
+        allow(board).to receive(:valid_move?).with(white_pawn, [1, 0], [2, 0]).and_return(true)
+        allow(board).to receive(:valid_move?).with(white_pawn, [1, 0], [3, 0]).and_return(true)
+        allow(board).to receive(:valid_move?).with(white_pawn, [1, 0], [4, 0]).and_return(false)
+      end
+      it 'returns an array with just those possibilities' do
+        expect(white_pawn.generate_possible_moves(board, [1, 0])).to eq([[2, 0], [3, 0]])
+      end
+    end
+  end
 end

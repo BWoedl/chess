@@ -30,4 +30,43 @@ describe Bishop do
       end
     end
   end
+
+  describe '.generate_possible_moves' do
+    context 'when there are possible moves in multiple directions' do
+      before do
+        allow(board).to receive(:valid_move?).and_return(true)
+      end
+      it 'returns an array with 7 possibilities from the bottom left corner on an empty board' do
+        expect(subject.generate_possible_moves(board, [0, 0]).size).to eq(7)
+      end
+      it 'returns an array with 13 possibilities from the middle of an empty board' do
+        expect(subject.generate_possible_moves(board, [3, 3]).size).to eq(13)
+      end
+      it 'returns an array with 7 possibilities from the top right corner on an empty board' do
+        expect(subject.generate_possible_moves(board, [7, 7]).size).to eq(7)
+      end
+      it 'returns an array which includes all the orthogonal spots' do
+        expect(subject.generate_possible_moves(board, [7, 7])).to eq([[6, 6], [5, 5], [4, 4], [3, 3], [2, 2], [1, 1], [0, 0]])
+      end
+    end
+    context 'when there are no possible moves' do
+      before do
+        allow(board).to receive(:valid_move?).with(subject, [0, 0], [1, 1]).and_return(false)
+      end
+      it 'returns an empty array' do
+        expect(subject.generate_possible_moves(board, [0, 0])).to eq([])
+      end
+    end
+    context 'when there are limited moves based on other pieces blocking' do
+      before do
+        allow(board).to receive(:valid_move?).with(subject, [0, 0], [1, 1]).and_return(true)
+        allow(board).to receive(:valid_move?).with(subject, [0, 0], [2, 2]).and_return(true)
+        allow(board).to receive(:valid_move?).with(subject, [0, 0], [0, 3]).and_return(false)
+        allow(board).to receive(:valid_move?).with(subject, [0, 0], [3, 3]).and_return(false)
+      end
+      it 'returns an array with just those possibilities' do
+        expect(subject.generate_possible_moves(board, [0, 0])).to eq([[1, 1], [2, 2]])
+      end
+    end
+  end
 end

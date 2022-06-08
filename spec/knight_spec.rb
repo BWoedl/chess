@@ -46,4 +46,31 @@ describe Knight do
       end
     end
   end
+  describe '.generate_possible_moves' do
+    context 'when there are no possible moves' do
+      before do
+        allow(board).to receive(:valid_move?).with(subject, [0, 2], [1, 4]).and_return(false)
+        allow(board).to receive(:valid_move?).with(subject, [0, 2], [1, 0]).and_return(false)
+        allow(board).to receive(:valid_move?).with(subject, [0, 2], [2, 3]).and_return(false)
+        allow(board).to receive(:valid_move?).with(subject, [0, 2], [2, 1]).and_return(false)
+        allow(board).to receive(:valid_move?).with(subject, [0, 2], [4, 0]).and_return(false)
+      end
+      it 'returns an empty array' do
+        expect(subject.generate_possible_moves(board, [0, 2])).to eq([])
+      end
+    end
+    context 'when there are limited moves based on other pieces blocking' do
+      before do
+        allow(board).to receive(:valid_move?).with(subject, [0, 2], [1, 4]).and_return(false)
+        allow(board).to receive(:valid_move?).with(subject, [0, 2], [1, 0]).and_return(false)
+        allow(board).to receive(:valid_move?).with(subject, [0, 2], [2, 3]).and_return(true)
+        allow(board).to receive(:valid_move?).with(subject, [0, 2], [2, 1]).and_return(true)
+        allow(board).to receive(:valid_move?).with(subject, [0, 2], [4, 0]).and_return(false)
+        allow(board).to receive(:valid_move?).with(subject, [0, 2], [4, 4]).and_return(false)
+      end
+      it 'returns an array with just those possibilities' do
+        expect(subject.generate_possible_moves(board, [0, 2])).to eq([[2, 3], [2, 1]])
+      end
+    end
+  end
 end
